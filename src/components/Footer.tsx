@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="footer" id="main-footer">
       <div className="footer-inner">
         <p className="footer-text">
-          &copy; {year} {import.meta.env.VITE_SITE_NAME || 'CoreSites'}. Todos os direitos reservados.
+          &copy; {year} {import.meta.env.VITE_SITE_NAME || 'CoreSites'}. {import.meta.env.VITE_COPYRIGHT_TEXT || 'Todos os direitos reservados.'}
         </p>
         <div className="footer-links">
           {import.meta.env.VITE_SOCIAL_GITHUB && (
