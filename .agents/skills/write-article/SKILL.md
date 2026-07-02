@@ -19,9 +19,15 @@ Use quando o usuário pedir para:
 - "produzir conteúdo sobre Z"
 - "novo artigo"
 
-## Formato do Arquivo
+## Formato e Local do Arquivo (Headless Architecture)
 
-Cada artigo deve ser salvo em `content/posts/` como um arquivo `.md` com o nome igual ao slug.
+**ATENÇÃO**: Este projeto usa uma arquitetura onde o Core pode ser um submódulo de um projeto Cliente.
+Antes de salvar, use ferramentas de exploração para verificar onde você está.
+1. Se existir uma pasta `../content/posts/` (você está rodando de dentro do submódulo `core/`), salve o artigo em `../content/posts/` e o SVG em `../public/images/posts/`.
+2. Se você estiver na raiz do projeto Cliente, salve normalmente em `content/posts/` e `public/images/posts/`.
+3. Nunca salve artigos de clientes dentro da pasta interna de conteúdo do Core.
+
+Cada artigo deve ser um arquivo `.md` com o nome igual ao slug.
 
 ### Estrutura Obrigatória do Frontmatter
 
@@ -68,7 +74,7 @@ Após criar o artigo, crie também um arquivo SVG em `public/images/posts/` com 
 3. **Gerar o frontmatter** completo com SEO
 4. **Escrever o conteúdo** em Markdown seguindo as regras GEO
 5. **Criar a cover image** SVG em `public/images/posts/`
-6. **Salvar o arquivo** em `content/posts/{slug}.md`
+6. **Salvar o arquivo** verificando se está rodando no cliente (`../content/posts/{slug}.md`) ou no core (`content/posts/{slug}.md`)
 7. **Informar o usuário** que o artigo foi criado e perguntar se quer revisá-lo
 
 ## Categorias Disponíveis
