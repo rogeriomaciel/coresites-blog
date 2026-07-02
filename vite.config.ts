@@ -15,5 +15,11 @@ export default defineConfig(({ mode }) => {
       },
     },
     assetsInclude: ['**/*.md'],
+    server: {
+      fs: {
+        // Permite que o Vite (no submódulo) leia a pasta content do projeto cliente (nível acima)
+        allow: ['..'],
+      },
+    },
   }
 })
