@@ -19,9 +19,11 @@ function NotFound() {
 }
 
 export default function App() {
+  const basePath = import.meta.env.VITE_BASE_PATH || '/'
+  
   return (
     <HelmetProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={basePath}>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />

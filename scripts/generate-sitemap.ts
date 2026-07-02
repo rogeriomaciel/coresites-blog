@@ -9,7 +9,12 @@ import path from 'path'
 import matter from 'gray-matter'
 
 const SITE_URL = process.env.VITE_SITE_URL || 'https://blog.example.com'
-const CONTENT_DIR = path.resolve(import.meta.dirname, '../content/posts')
+
+// Suporte a Submódulos: busca a pasta content do cliente primeiro, senão usa a interna
+const internalContentDir = path.resolve(import.meta.dirname, '../content/posts')
+const externalContentDir = path.resolve(import.meta.dirname, '../../content/posts')
+const CONTENT_DIR = fs.existsSync(externalContentDir) ? externalContentDir : internalContentDir
+
 const OUTPUT_PATH = path.resolve(import.meta.dirname, '../dist/sitemap.xml')
 
 interface PostMeta {

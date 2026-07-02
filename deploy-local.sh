@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 # ============================================================
-# CoreSites Blog — Deploy Local Script
-# Compila o projeto e envia para a VPS de produção via rsync.
-# Compatível com a skill publish-site do Antigravity.
+# CoreSites Blog — Deploy Local Script (CI/CD Local)
+# Cria branch, MR, builda e envia para a VPS via rsync.
 # ============================================================
 
 set -euo pipefail
 
-# Load environment variables
-if [ -f .env ]; then
+# Load environment variables (Prioritize client .env if running as submodule)
+if [ -f ../.env ]; then
+  echo "📄 Carregando .env do diretório do cliente (../.env)"
+  set -a
+  source ../.env
+  set +a
+elif [ -f .env ]; then
+  echo "📄 Carregando .env local"
   set -a
   source .env
   set +a
@@ -18,13 +23,29 @@ DEPLOY_VPS_IP="${DEPLOY_VPS_IP:?'DEPLOY_VPS_IP não configurado no .env'}"
 DEPLOY_USER="${DEPLOY_USER:-root}"
 DEPLOY_PATH="${DEPLOY_PATH:-/var/www/blog}"
 
+BRANCH_NAME="publish-$(date '+%Y%m%d-%H%M%S')"
+
 echo "========================================"
-echo "  CoreSites Blog — Deploy"
+echo "  CoreSites Blog — Local CI/CD Publish"
 echo "========================================"
 
-# Step 1: Build
+echo "📝 1. Verificando código e versionamento..."
+if [ -n "$(git status --porcelain)" ]; then
+  git checkout -b "$BRANCH_NAME"
+  git add -A
+  git commit -m "publish: atualização de conteúdo e build"
+  
+  echo "🚀 2. Fazendo push e criando Merge Request..."
+  git push -u origin "$BRANCH_NAME"
+  
+  # Cria o MR/PR no GitHub via CLI
+  gh pr create --title "Publish: atualização de conteúdo" --body "Automated MR gerado pelo CI/CD local." || echo "Aviso: Não foi possível criar o PR. Verifique a autenticação do gh cli."
+else
+  echo "ℹ️  Nenhuma alteração pendente no Git. Pulando etapa de branch/MR."
+fi
+
 echo ""
-echo "📦 Compilando o projeto..."
+echo "📦 3. Compilando o projeto localmente..."
 bun run build
 
 if [ ! -d "dist" ]; then
@@ -32,36 +53,17 @@ if [ ! -d "dist" ]; then
   exit 1
 fi
 
-echo "✅ Build concluído com sucesso."
-
-# Step 2: Generate sitemap
 echo ""
 echo "🗺️  Gerando sitemap.xml..."
 bun run generate-sitemap
-echo "✅ Sitemap gerado."
 
-# Step 3: Git commit & push (if there are changes)
 echo ""
-echo "📝 Verificando alterações no Git..."
-if [ -n "$(git status --porcelain)" ]; then
-  COMMIT_MSG="${1:-"chore: publish new content $(date '+%Y-%m-%d %H:%M')"}"
-  git add -A
-  git commit -m "$COMMIT_MSG"
-  git push origin main
-  echo "✅ Alterações commitadas e pushadas."
-else
-  echo "ℹ️  Nenhuma alteração pendente no Git."
-fi
-
-# Step 4: Deploy via rsync
-echo ""
-echo "🚀 Enviando para ${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}..."
+echo "🚀 4. Enviando arquivos buildados para o servidor (Apenas pasta dist)..."
+# Usando rsync para enviar apenas o build
 rsync -avz --delete \
-  --exclude='.git' \
-  --exclude='.env' \
   dist/ "${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}/"
 
 echo ""
 echo "========================================"
-echo "  ✅ Deploy concluído com sucesso!"
+echo "  ✅ Publish concluído com sucesso!"
 echo "========================================"

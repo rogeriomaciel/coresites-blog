@@ -1,14 +1,14 @@
 ---
 name: publish-blog
 description: >
-  Compila o blog e realiza o deploy para o servidor de produção.
+  Compila o blog e realiza o deploy para o servidor de produção, criando branch e MR automaticamente.
   Use esta skill quando o usuário solicitar "publicar o blog", "fazer deploy",
   "subir para produção", "enviar para o servidor" ou termos equivalentes.
 ---
 
 # Publish Blog Skill
 
-Esta skill descreve o processo de compilação e deploy do blog estático para a VPS de produção.
+Esta skill descreve o processo de CI/CD local, onde o agente automatiza o controle de versão e o deploy estático do blog.
 
 ## Quando Usar Esta Skill
 
@@ -19,42 +19,38 @@ Use quando o usuário pedir para:
 - "enviar para o servidor"
 - "publicar"
 
+## O Novo Fluxo de Trabalho (CI/CD Local)
+
+Quando acionado, o script de deploy fará exatamente as seguintes etapas:
+1. **Branch e MR**: Cria uma nova branch com as alterações, faz commit/push e abre um Merge Request (MR/PR) no repositório remoto.
+2. **Build Local**: Roda `bun run build` na máquina para gerar os estáticos.
+3. **Upload (Deploy)**: Pega **apenas** a pasta resultante do build (`dist/`) e envia via SSH/Rsync para o servidor. O código fonte *não* vai para o servidor.
+
 ## Pré-requisitos
 
-1. O arquivo `.env` deve existir na raiz do projeto `/rogerio/core/coresites-blog/` com:
-   - `DEPLOY_VPS_IP` — IP da VPS de produção
-   - `DEPLOY_USER` — Usuário SSH (padrão: root)
-   - `DEPLOY_PATH` — Diretório no servidor (padrão: /var/www/blog)
-2. A chave SSH deve estar configurada para acesso sem senha ao servidor.
+1. O arquivo `.env` deve existir na raiz do projeto com:
+   - `DEPLOY_VPS_IP`
+   - `DEPLOY_USER`
+   - `DEPLOY_PATH`
+2. O `gh cli` (GitHub CLI) deve estar autenticado na máquina para a criação do MR.
 
 ## Passos para Publicação
 
-### Passo 1: Verificar Ambiente
-Verifique se o `.env` existe e tem as variáveis necessárias.
-
-### Passo 2: Executar o Deploy
-Execute o script de deploy:
+### Passo 1: Executar o Deploy
+Execute o script de deploy através do terminal:
 
 ```bash
 chmod +x deploy-local.sh
 ./deploy-local.sh
 ```
 
-Parâmetros do comando:
-- **Command Line:** `./deploy-local.sh` ou `./deploy-local.sh "Mensagem de commit customizada"`
+Parâmetros do comando no Antigravity:
+- **Command Line:** `./deploy-local.sh`
 - **Cwd:** `/rogerio/core/coresites-blog`
 - **WaitMsBeforeAsync:** `10000`
 
-O script irá automaticamente:
-1. Compilar o projeto com `bun run build`
-2. Gerar o `sitemap.xml` atualizado
-3. Fazer commit e push das alterações para o GitHub
-4. Enviar a pasta `dist/` via rsync para a VPS
-
-### Passo 3: Confirmar Resultado
-Monitore a saída do terminal. Se retornar "Deploy concluído com sucesso", informe ao usuário.
-
-### Resolução de Problemas
-- **Build falhou**: Verifique erros de TypeScript ou dependências faltantes
-- **Git falhou**: Verifique autenticação SSH do GitHub
-- **Rsync falhou**: Verifique conectividade SSH com a VPS e permissões do diretório
+### Passo 2: Confirmar Resultado
+Monitore a saída do terminal.
+- Verifique se a branch e o MR foram criados no log.
+- Verifique se o rsync terminou sem erros.
+Se o terminal retornar "Publish concluído com sucesso!", informe ao usuário que o código já está em MR para histórico e a versão buildada já foi para a VPS!

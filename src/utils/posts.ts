@@ -30,13 +30,19 @@ function calculateReadingTime(text: string): number {
 
 /**
  * Load all markdown posts from content/posts/ at build time.
- * Uses Vite's import.meta.glob for static import.
+ * Searches both the internal template directory and the external client directory (if used as a submodule).
  */
-const postFiles = import.meta.glob('/content/posts/*.md', {
-  query: '?raw',
-  eager: true,
-  import: 'default',
-}) as Record<string, string>
+const postFiles = import.meta.glob(
+  [
+    '../../content/posts/*.md',
+    '../../../content/posts/*.md'
+  ],
+  {
+    query: '?raw',
+    eager: true,
+    import: 'default',
+  }
+) as Record<string, string>
 
 /**
  * Parse a raw markdown string into a Post object.
