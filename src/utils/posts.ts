@@ -32,7 +32,7 @@ function calculateReadingTime(text: string): number {
  * Load all markdown posts from content/posts/ at build time.
  * Searches both the internal template directory and the external client directory (if used as a submodule).
  */
-const postFiles = import.meta.glob(
+const postFilesRaw = import.meta.glob(
   [
     '../../content/posts/*.md',
     '../../../content/posts/*.md'
@@ -43,6 +43,14 @@ const postFiles = import.meta.glob(
     import: 'default',
   }
 ) as Record<string, string>
+
+// Se houver posts do cliente (../../../), ignoramos totalmente os posts internos do Core (../../)
+const allPaths = Object.keys(postFilesRaw)
+const hasClientPosts = allPaths.some(path => path.startsWith('../../../content/posts'))
+
+const postFiles = hasClientPosts
+  ? Object.fromEntries(Object.entries(postFilesRaw).filter(([path]) => path.startsWith('../../../content/posts')))
+  : postFilesRaw
 
 /**
  * Parse a raw markdown string into a Post object.
