@@ -5,23 +5,27 @@ export default function Footer() {
     <footer className="footer" id="main-footer">
       <div className="footer-inner">
         <p className="footer-text">
-          &copy; {year} CoreSites. Todos os direitos reservados.
+          &copy; {year} {import.meta.env.VITE_SITE_NAME || 'CoreSites'}. Todos os direitos reservados.
         </p>
         <div className="footer-links">
-          <a
-            href="https://github.com/rogeriomaciel"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub
-          </a>
-          <a
-            href="https://linkedin.com/in/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            LinkedIn
-          </a>
+          {import.meta.env.VITE_SOCIAL_GITHUB && (
+            <a
+              href={import.meta.env.VITE_SOCIAL_GITHUB}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          )}
+          {import.meta.env.VITE_SOCIAL_LINKEDIN && (
+            <a
+              href={import.meta.env.VITE_SOCIAL_LINKEDIN}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+          )}
         </div>
       </div>
     </footer>

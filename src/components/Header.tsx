@@ -22,8 +22,12 @@ export default function Header() {
     <header className="header" id="main-header">
       <div className="header-inner">
         <Link to="/" className="header-logo" id="header-logo">
-          <span className="header-logo-icon">C</span>
-          <span>CoreSites</span>
+          {import.meta.env.VITE_LOGO_URL ? (
+            <img src={import.meta.env.VITE_LOGO_URL} alt={import.meta.env.VITE_SITE_NAME || 'Blog'} style={{ height: '28px', borderRadius: '4px' }} />
+          ) : (
+            <span className="header-logo-icon">{import.meta.env.VITE_LOGO_TEXT || 'C'}</span>
+          )}
+          <span>{import.meta.env.VITE_SITE_NAME || 'CoreSites Blog'}</span>
         </Link>
 
         <nav className="header-nav" id="main-nav">

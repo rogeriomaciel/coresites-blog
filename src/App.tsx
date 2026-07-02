@@ -21,6 +21,11 @@ function NotFound() {
 export default function App() {
   const basePath = import.meta.env.VITE_BASE_PATH || '/'
   
+  // Theming Dinâmico via CSS Variables
+  if (import.meta.env.VITE_COLOR_H) document.documentElement.style.setProperty('--accent-h', import.meta.env.VITE_COLOR_H)
+  if (import.meta.env.VITE_COLOR_S) document.documentElement.style.setProperty('--accent-s', import.meta.env.VITE_COLOR_S)
+  if (import.meta.env.VITE_COLOR_L) document.documentElement.style.setProperty('--accent-l', import.meta.env.VITE_COLOR_L)
+
   return (
     <HelmetProvider>
       <BrowserRouter basename={basePath}>
