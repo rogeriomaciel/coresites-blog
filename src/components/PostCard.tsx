@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import type { Post } from '../utils/posts'
-import { formatDate } from '../utils/posts'
+import { formatDate, resolveAssetPath } from '../utils/posts'
 
 interface PostCardProps {
   post: Post
@@ -19,7 +19,7 @@ export default function PostCard({ post }: PostCardProps) {
         <div className="post-card-image-wrapper">
           <img
             className="post-card-image"
-            src={frontmatter.cover_image}
+            src={resolveAssetPath(frontmatter.cover_image)}
             alt={frontmatter.title}
             loading="lazy"
           />

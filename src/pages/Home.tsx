@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import SEOHead from '../components/SEOHead'
 import PostCard from '../components/PostCard'
-import { getAllPosts, getAllCategories, searchPosts } from '../utils/posts'
+import { getAllPosts, getAllCategories, searchPosts, resolveAssetPath } from '../utils/posts'
 
 export default function Home() {
   const [searchParams] = useSearchParams()
@@ -80,7 +80,7 @@ export default function Home() {
             {featuredPost.frontmatter.cover_image && (
               <img
                 className="featured-card-image"
-                src={featuredPost.frontmatter.cover_image}
+                src={resolveAssetPath(featuredPost.frontmatter.cover_image)}
                 alt={featuredPost.frontmatter.title}
               />
             )}

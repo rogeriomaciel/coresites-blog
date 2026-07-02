@@ -5,7 +5,7 @@ import ArticleRenderer from '../components/ArticleRenderer'
 import ReadingProgress from '../components/ReadingProgress'
 import ShareButtons from '../components/ShareButtons'
 import PostCard from '../components/PostCard'
-import { getPostBySlug, getRelatedPosts, formatDate } from '../utils/posts'
+import { getPostBySlug, getRelatedPosts, formatDate, resolveAssetPath } from '../utils/posts'
 
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -70,7 +70,7 @@ export default function PostPage() {
           <div className="container">
             <img
               className="article-hero-image"
-              src={frontmatter.cover_image}
+              src={resolveAssetPath(frontmatter.cover_image)}
               alt={frontmatter.title}
             />
           </div>

@@ -1,3 +1,17 @@
+
+/**
+ * Resolves an asset path based on the Vite BASE_URL configuration.
+ * This ensures images work correctly even when the site is deployed to a subpath.
+ */
+export const resolveAssetPath = (path?: string | null): string => {
+  if (!path) return ''
+  if (path.startsWith('http') || path.startsWith('data:')) return path
+  
+  const base = import.meta.env.BASE_URL || '/'
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path
+  return base.endsWith('/') ? `${base}${cleanPath}` : `${base}/${cleanPath}`
+}
+
 export interface PostFrontmatter {
   title: string
   slug: string
