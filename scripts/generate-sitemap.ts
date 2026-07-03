@@ -21,6 +21,7 @@ interface PostMeta {
   slug: string
   date: string
   published: boolean
+  title: string
 }
 
 function getPostsMeta(): PostMeta[] {
@@ -39,6 +40,7 @@ function getPostsMeta(): PostMeta[] {
         slug: data.slug || path.basename(file, '.md'),
         date: data.date || new Date().toISOString(),
         published: data.published !== false,
+        title: data.title || path.basename(file, '.md'),
       })
     }
   }
@@ -84,4 +86,35 @@ ${urls.join('\n')}
   console.log(`   ${posts.length} artigos indexados.`)
 }
 
+function generateRobotsTxt(): void {
+  const robotsPath = path.resolve(import.meta.dirname, '../dist/robots.txt')
+  const content = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+  fs.writeFileSync(robotsPath, content, 'utf-8')
+  console.log(`✅ robots.txt gerado: ${robotsPath}`)
+}
+
+function generateLlmsTxt(posts: PostMeta[]): void {
+  const llmsPath = path.resolve(import.meta.dirname, '../dist/llms.txt')
+  const postLines = posts.map(p => `- [${p.title}](${SITE_URL}/post/${p.slug})`).join('\n')
+  const content = `# CoreSites Blog
+
+> Blog desenvolvido com React e Vite.
+
+## Resumo
+Este blog contém artigos, dicas e notícias.
+
+## Detalhes
+- Frontend: React, Vite, Tailwind CSS
+- URL Principal: ${SITE_URL}
+
+## Artigos Disponíveis
+${postLines}
+`
+  fs.writeFileSync(llmsPath, content, 'utf-8')
+  console.log(`✅ llms.txt gerado: ${llmsPath}`)
+}
+
 generateSitemap()
+const allPosts = getPostsMeta()
+generateRobotsTxt()
+generateLlmsTxt(allPosts)
