@@ -63,8 +63,8 @@ O conteúdo DEVE seguir estas regras para maximizar citações por IAs:
 
 Após criar o artigo, crie também um arquivo SVG em `public/images/posts/` com o mesmo nome do slug. O SVG deve:
 - Ter viewBox="0 0 1200 630" (proporção Open Graph)
-- Usar fundo escuro (#0a0a12) com elementos visuais sutis
-- Incluir o título do artigo em texto
+- Usar fundo escuro (#0a0a12) com grafismos abstratos e elementos visuais de tecnologia (linhas, conexões, etc)
+- **NÃO incluir o título ou textos na imagem** (a interface do blog desenha o título via HTML por cima do SVG; a imagem deve atuar apenas como um background decorativo)
 - Usar a paleta de cores do blog (azul/ciano #0ea5e9, #06b6d4)
 
 ## Passos para o Agente
