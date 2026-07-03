@@ -4,6 +4,7 @@ import {
   generateArticleJsonLd,
   generateBreadcrumbJsonLd,
   generateWebSiteJsonLd,
+  generateFAQJsonLd,
   buildOgTags,
   buildTwitterTags,
 } from '../utils/seo'
@@ -19,6 +20,8 @@ interface SEOHeadProps {
   breadcrumbs?: { name: string; url: string }[]
   /** Whether this is the homepage */
   isHome?: boolean
+  /** Raw markdown content for FAQ extraction */
+  content?: string
 }
 
 export default function SEOHead({
@@ -28,6 +31,7 @@ export default function SEOHead({
   readingTime,
   breadcrumbs,
   isHome,
+  content,
 }: SEOHeadProps) {
   const siteName = import.meta.env.VITE_SITE_NAME || 'CoreSites Blog'
   const siteDescription =
@@ -88,6 +92,11 @@ export default function SEOHead({
       {post && readingTime && (
         <script type="application/ld+json">
           {generateArticleJsonLd(post, readingTime)}
+        </script>
+      )}
+      {content && generateFAQJsonLd(content) && (
+        <script type="application/ld+json">
+          {generateFAQJsonLd(content)}
         </script>
       )}
       {breadcrumbs && (
