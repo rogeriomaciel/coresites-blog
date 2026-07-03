@@ -83,7 +83,30 @@ ${urls.join('\n')}
 
   fs.writeFileSync(OUTPUT_PATH, xml, 'utf-8')
   console.log(`✅ Sitemap gerado: ${OUTPUT_PATH}`)
-  console.log(`   ${posts.length} artigos indexados.`)
+  console.log(`   ${posts.length} artigos indexados no sitemap.`)
+
+  // --- Gerar llms.txt ---
+  const SITE_NAME = process.env.VITE_SITE_NAME || 'Blog'
+  const SITE_DESC = process.env.VITE_SITE_DESCRIPTION || 'Conteúdo do blog.'
+  
+  let llmsContent = `# ${SITE_NAME}\n\n${SITE_DESC}\n\n## Artigos\n\n`
+  
+  const allFiles = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.md'))
+  for (const file of allFiles) {
+    const raw = fs.readFileSync(path.join(CONTENT_DIR, file), 'utf-8')
+    const { data } = matter(raw)
+    if (data.published !== false) {
+      const postSlug = data.slug || path.basename(file, '.md')
+      const postUrl = `${SITE_URL}/post/${postSlug}`
+      const title = data.title || postSlug
+      const excerpt = data.excerpt || data.meta_description || ''
+      llmsContent += `- [${title}](${postUrl}): ${excerpt}\n`
+    }
+  }
+
+  const llmsPath = path.resolve(import.meta.dirname, '../dist/llms.txt')
+  fs.writeFileSync(llmsPath, llmsContent, 'utf-8')
+  console.log(`✅ llms.txt gerado: ${llmsPath}`)
 }
 
 function generateRobotsTxt(): void {
