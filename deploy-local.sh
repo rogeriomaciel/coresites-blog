@@ -60,8 +60,13 @@ bun run generate-sitemap
 echo ""
 echo "🚀 4. Enviando arquivos buildados para o servidor (Apenas pasta dist)..."
 # Usando rsync para enviar apenas o build
-rsync -avz --delete \
-  dist/ "${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}/"
+if [ -n "${DEPLOY_USERPASSWORD:-}" ]; then
+  sshpass -p "$DEPLOY_USERPASSWORD" rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" \
+    dist/ "${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}/"
+else
+  rsync -avz --delete \
+    dist/ "${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}/"
+fi
 
 echo ""
 echo "========================================"
