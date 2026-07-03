@@ -114,3 +114,40 @@ export function buildTwitterTags(post: PostFrontmatter) {
       : undefined,
   }
 }
+
+/**
+ * Generate JSON-LD FAQPage structured data from markdown content.
+ * Extracts headers ending with '?' and the subsequent paragraph.
+ */
+export function generateFAQJsonLd(content: string): string | null {
+  // Regex matches '## ' or '### ' followed by text ending with '?'
+  // Then captures the paragraph(s) until the next header or EOF
+  const faqRegex = /^#{2,3}\s+(.+?\?)\s*\n+([^#]+)/gm
+  const faqs: { question: string; answer: string }[] = []
+  
+  let match;
+  while ((match = faqRegex.exec(content)) !== null) {
+    const question = match[1].trim()
+    const answer = match[2].trim()
+    if (question && answer) {
+      faqs.push({ question, answer })
+    }
+  }
+
+  if (faqs.length === 0) return null
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  }
+
+  return JSON.stringify(jsonLd)
+}

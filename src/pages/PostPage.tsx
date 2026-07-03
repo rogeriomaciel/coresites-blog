@@ -62,6 +62,7 @@ export default function PostPage() {
         post={frontmatter}
         readingTime={readingTime}
         breadcrumbs={breadcrumbs}
+        content={content}
       />
 
       <article className="article-page animate-fade-in" id="article-page">
