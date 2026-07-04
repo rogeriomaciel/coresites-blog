@@ -7,6 +7,8 @@ description: >
 
 # Commit and Push Skill
 
+**ATENÇÃO (CRÍTICO)**: O projeto `core` é estritamente **READ-ONLY**. Certifique-se de executar os comandos de commit e push sempre a partir da raiz do projeto cliente (o diretório pai que consome o core), para que as alterações e novos artigos fiquem no repositório do cliente, e NUNCA diretamente de dentro da pasta interna `core/`.
+
 Esta skill instrui o agente a verificar alterações no código, preparar todas as modificações e enviá-las para o repositório remoto Git.
 
 ## Quando Usar Esta Skill

@@ -21,11 +21,12 @@ Use quando o usuário pedir para:
 
 ## Formato e Local do Arquivo (Headless Architecture)
 
-**ATENÇÃO**: Este projeto usa uma arquitetura onde o Core pode ser um submódulo de um projeto Cliente.
-Antes de salvar, use ferramentas de exploração para verificar onde você está.
-1. Se existir uma pasta `../content/posts/` (você está rodando de dentro do submódulo `core/`), salve o artigo em `../content/posts/` e o SVG em `../public/images/posts/`.
-2. Se você estiver na raiz do projeto Cliente, salve normalmente em `content/posts/` e `public/images/posts/`.
-3. Nunca salve artigos de clientes dentro da pasta interna de conteúdo do Core.
+**ATENÇÃO (CRÍTICO)**: O projeto `core` é estritamente **READ-ONLY**. TODAS as alterações de código, estilização e criação de novos artigos DEVEM ser feitas no projeto cliente (o projeto pai que utiliza o core), e NUNCA dentro da pasta `core`.
+
+Antes de salvar qualquer conteúdo, garanta que você está operando no projeto cliente:
+1. Se você estiver operando dentro de um diretório `core/`, você DEVE salvar os artigos em `../content/posts/` e as imagens em `../public/images/posts/` (ou seja, no projeto pai).
+2. Se você estiver na raiz do projeto Cliente, salve em `content/posts/` e `public/images/posts/`.
+3. É expressamente PROIBIDO salvar, editar ou comitar qualquer artigo, imagem ou configuração específica do cliente dentro da pasta interna `core/`. O `core` mantém apenas a estrutura base.
 
 Cada artigo deve ser um arquivo `.md` com o nome igual ao slug.
 

@@ -8,6 +8,8 @@ description: >
 
 # Publish Blog Skill
 
+**ATENÇÃO (CRÍTICO)**: O projeto `core` é estritamente **READ-ONLY**. Certifique-se de executar os comandos de deploy e build sempre a partir da raiz do projeto cliente (o diretório pai que consome o core), e NUNCA diretamente de dentro da pasta interna `core/`.
+
 Esta skill descreve o processo de CI/CD local, onde o agente automatiza o controle de versão e o deploy estático do blog.
 
 ## Quando Usar Esta Skill
