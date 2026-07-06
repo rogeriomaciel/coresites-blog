@@ -12,13 +12,13 @@
         "responseMode": "lastNode",
         "options": {}
       },
-      "id": "webhook-trigger",
+      "id": "f1bcbd8f-8497-4f3d-9cdc-2d65e4769c7b",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
       "position": [
-        256,
-        304
+        544,
+        368
       ],
       "webhookId": "social-publish-trigger"
     },
@@ -26,18 +26,17 @@
       "parameters": {
         "postAs": "organization",
         "organization": "135145495",
-        "text": "={{ $json.content.parts[0].text }}",
-        "additionalFields": {},
+        "text": "={{ $('gemini linkedin post').item.json.text || $('gemini linkedin post').item.json.content?.parts?.[0]?.text || $('gemini linkedin post').item.json.content || $('gemini linkedin post').item.json.response }}",
         "shareMediaCategory": "IMAGE",
-        "imageBinaryProperty": "data"
+        "additionalFields": {}
       },
-      "id": "linkedin-output",
+      "id": "caf83b4f-1b5c-495e-a712-c4a846f86125",
       "name": "LinkedIn (Mock)",
       "type": "n8n-nodes-base.linkedIn",
       "typeVersion": 1,
       "position": [
-        1100,
-        100
+        1776,
+        80
       ],
       "credentials": {
         "linkedInOAuth2Api": {
@@ -67,10 +66,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        640,
-        100
+        992,
+        80
       ],
-      "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
+      "id": "1de013b8-16b0-4776-804a-2c2cf0809be0",
       "name": "gemini linkedin post",
       "credentials": {
         "googlePalmApi": {
@@ -84,25 +83,24 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        192,
-        80
+        544,
+        176
       ],
-      "id": "8b52d30e-a994-4dab-b61a-9eeef1cc3dd3",
+      "id": "de78c1d8-9e62-4e46-964f-52ae945aa622",
       "name": "When clicking ‘Execute workflow’"
     },
     {
       "parameters": {
         "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
-        "responseFormat": "file",
         "options": {}
       },
-      "id": "fetch-image-node",
+      "id": "0bf3e8ad-1b3e-49a2-b7a8-cc406452b7ac",
       "name": "Fetch Image (LinkedIn)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        850,
-        100
+        1344,
+        80
       ]
     },
     {
@@ -112,8 +110,7 @@
         "rules": {
           "rules": [
             {
-              "value2": "linkedin",
-              "output": 0
+              "value2": "linkedin"
             },
             {
               "value2": "facebook",
@@ -126,13 +123,13 @@
           ]
         }
       },
-      "id": "switch-router",
+      "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
       "name": "Roteador (Switch)",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 1,
       "position": [
-        400,
-        304
+        768,
+        240
       ]
     },
     {
@@ -156,10 +153,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        640,
-        304
+        992,
+        272
       ],
-      "id": "gemini-facebook",
+      "id": "01d9272e-e628-4a84-a0b4-59e361dcc8f3",
       "name": "gemini facebook post",
       "credentials": {
         "googlePalmApi": {
@@ -189,10 +186,10 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        640,
-        500
+        992,
+        464
       ],
-      "id": "gemini-instagram",
+      "id": "b5752cef-7320-4e39-a765-ea1a72fd148d",
       "name": "gemini instagram post",
       "credentials": {
         "googlePalmApi": {
@@ -204,58 +201,67 @@
     {
       "parameters": {
         "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
-        "responseFormat": "file",
         "options": {}
       },
-      "id": "fetch-fb",
+      "id": "9eaa6f05-6f0a-4e34-b9ea-c337f8ddcf58",
       "name": "Fetch Image (Facebook)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        850,
-        304
+        1344,
+        272
       ]
     },
     {
       "parameters": {
         "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
-        "responseFormat": "file",
         "options": {}
       },
-      "id": "fetch-ig",
+      "id": "73e929e9-039b-468a-851c-981f137c962e",
       "name": "Fetch Image (Instagram)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        850,
-        500
+        1344,
+        464
       ]
     },
     {
-      "parameters": {
-        "notice": "Conecte sua conta do Facebook Pages aqui e configure o campo de imagem e texto!"
-      },
-      "id": "fb-node",
-      "name": "Facebook Pages",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        1100,
-        304
-      ]
-    },
-    {
-      "parameters": {
-        "notice": "Conecte sua conta do Instagram for Business aqui!"
-      },
-      "id": "ig-node",
+      "parameters": {},
+      "id": "b050b5cc-d907-493e-9a0e-d0b92f35a5e7",
       "name": "Instagram",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        1100,
-        500
+        1776,
+        464
       ]
+    },
+    {
+      "parameters": {
+        "httpRequestMethod": "POST",
+        "node": "61591675503932",
+        "edge": "photos",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {
+          "bodyParametersJson": "={{ JSON.stringify({ message: $('gemini facebook post').item.json.text || $('gemini facebook post').item.json.content?.parts?.[0]?.text || $('gemini facebook post').item.json.content || $('gemini facebook post').item.json.response || 'Veja nosso novo artigo!' }) }}"
+        }
+      },
+      "type": "n8n-nodes-base.facebookGraphApi",
+      "typeVersion": 1,
+      "position": [
+        1776,
+        272
+      ],
+      "id": "608aa50f-59ac-4ffe-a082-3377d566e600",
+      "name": "Facebook Graph API",
+      "credentials": {
+        "facebookGraphApi": {
+          "id": "1oXnn2Wk5wbvKjeW",
+          "name": "Facebook Graph account"
+        }
+      }
     }
   ],
   "connections": {
@@ -343,7 +349,7 @@
       "main": [
         [
           {
-            "node": "Facebook Pages",
+            "node": "Facebook Graph API",
             "type": "main",
             "index": 0
           }
@@ -359,6 +365,22 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Roteador (Switch)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook Graph API": {
+      "main": [
+        []
       ]
     }
   },
@@ -394,8 +416,8 @@
       }
     ]
   },
-  "activeVersionId": "8a52f24a-5892-4403-a86d-01d42a684559",
-  "versionCounter": 31,
+  "activeVersionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
+  "versionCounter": 52,
   "triggerCount": 1,
   "shared": [
     {
@@ -418,9 +440,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-07-06T02:33:01.791Z",
-    "createdAt": "2026-07-06T02:33:01.791Z",
-    "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+    "updatedAt": "2026-07-06T14:07:53.556Z",
+    "createdAt": "2026-07-06T14:07:48.356Z",
+    "versionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
     "workflowId": "ibCEPsroSZuwWbVI",
     "nodes": [
       {
@@ -430,13 +452,13 @@
           "responseMode": "lastNode",
           "options": {}
         },
-        "id": "webhook-trigger",
+        "id": "f1bcbd8f-8497-4f3d-9cdc-2d65e4769c7b",
         "name": "Webhook",
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 1,
         "position": [
-          256,
-          304
+          544,
+          368
         ],
         "webhookId": "social-publish-trigger"
       },
@@ -445,17 +467,16 @@
           "postAs": "organization",
           "organization": "135145495",
           "text": "={{ $json.content.parts[0].text }}",
-          "additionalFields": {},
           "shareMediaCategory": "IMAGE",
-          "imageBinaryProperty": "data"
+          "additionalFields": {}
         },
-        "id": "linkedin-output",
+        "id": "caf83b4f-1b5c-495e-a712-c4a846f86125",
         "name": "LinkedIn (Mock)",
         "type": "n8n-nodes-base.linkedIn",
         "typeVersion": 1,
         "position": [
-          1200,
-          304
+          1776,
+          80
         ],
         "credentials": {
           "linkedInOAuth2Api": {
@@ -485,10 +506,10 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.2,
         "position": [
-          640,
-          304
+          992,
+          80
         ],
-        "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
+        "id": "1de013b8-16b0-4776-804a-2c2cf0809be0",
         "name": "gemini linkedin post",
         "credentials": {
           "googlePalmApi": {
@@ -502,26 +523,185 @@
         "type": "n8n-nodes-base.manualTrigger",
         "typeVersion": 1,
         "position": [
-          192,
-          80
+          544,
+          176
         ],
-        "id": "8b52d30e-a994-4dab-b61a-9eeef1cc3dd3",
+        "id": "de78c1d8-9e62-4e46-964f-52ae945aa622",
         "name": "When clicking ‘Execute workflow’"
       },
       {
         "parameters": {
           "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
-          "responseFormat": "file",
           "options": {}
         },
-        "id": "fetch-image-node",
-        "name": "Fetch Image",
+        "id": "0bf3e8ad-1b3e-49a2-b7a8-cc406452b7ac",
+        "name": "Fetch Image (LinkedIn)",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4,
         "position": [
-          900,
-          304
+          1344,
+          80
         ]
+      },
+      {
+        "parameters": {
+          "dataType": "string",
+          "value1": "={{ $json.body.network }}",
+          "rules": {
+            "rules": [
+              {
+                "value2": "linkedin"
+              },
+              {
+                "value2": "facebook",
+                "output": 1
+              },
+              {
+                "value2": "instagram",
+                "output": 2
+              }
+            ]
+          }
+        },
+        "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
+        "name": "Roteador (Switch)",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 1,
+        "position": [
+          768,
+          240
+        ]
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "={{ 'Você é um social media expert. Crie um post engajador para o Facebook promovendo o seguinte artigo.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS:\\n1. Retorne APENAS o texto.\\n2. Tom coloquial e amigável, convidando para ler e comentar.\\n3. Termine com a URL do artigo.' }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          992,
+          272
+        ],
+        "id": "01d9272e-e628-4a84-a0b4-59e361dcc8f3",
+        "name": "gemini facebook post",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "XeGsz9eHLKBUyX6c",
+            "name": "Gemini Api Key Rogerio"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "={{ 'Você é um social media expert. Crie uma legenda para o Instagram promovendo o artigo.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS:\\n1. Retorne APENAS o texto.\\n2. Muito engajador, com emojis e CTA visual (Acesse o link na bio / Leia mais). Mande a URL também.\\n3. Hashtags virais no final.' }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          992,
+          464
+        ],
+        "id": "b5752cef-7320-4e39-a765-ea1a72fd148d",
+        "name": "gemini instagram post",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "XeGsz9eHLKBUyX6c",
+            "name": "Gemini Api Key Rogerio"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+          "options": {}
+        },
+        "id": "9eaa6f05-6f0a-4e34-b9ea-c337f8ddcf58",
+        "name": "Fetch Image (Facebook)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          1344,
+          272
+        ]
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+          "options": {}
+        },
+        "id": "73e929e9-039b-468a-851c-981f137c962e",
+        "name": "Fetch Image (Instagram)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          1344,
+          464
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "b050b5cc-d907-493e-9a0e-d0b92f35a5e7",
+        "name": "Instagram",
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1776,
+          464
+        ]
+      },
+      {
+        "parameters": {
+          "httpRequestMethod": "POST",
+          "graphApiVersion": "v25.0",
+          "node": "61591675503932",
+          "edge": "feed",
+          "sendBinaryData": true,
+          "options": {
+            "queryParametersJson": "{\n  message: \"texto\"\n}"
+          }
+        },
+        "type": "n8n-nodes-base.facebookGraphApi",
+        "typeVersion": 1,
+        "position": [
+          1776,
+          272
+        ],
+        "id": "608aa50f-59ac-4ffe-a082-3377d566e600",
+        "name": "Facebook Graph API",
+        "credentials": {
+          "facebookGraphApi": {
+            "id": "1oXnn2Wk5wbvKjeW",
+            "name": "Facebook Graph account"
+          }
+        }
       }
     ],
     "connections": {
@@ -529,7 +709,32 @@
         "main": [
           [
             {
+              "node": "Roteador (Switch)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Roteador (Switch)": {
+        "main": [
+          [
+            {
               "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "gemini facebook post",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "gemini instagram post",
               "type": "main",
               "index": 0
             }
@@ -540,7 +745,62 @@
         "main": [
           [
             {
-              "node": "Fetch Image",
+              "node": "Fetch Image (LinkedIn)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gemini facebook post": {
+        "main": [
+          [
+            {
+              "node": "Fetch Image (Facebook)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gemini instagram post": {
+        "main": [
+          [
+            {
+              "node": "Fetch Image (Instagram)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Image (LinkedIn)": {
+        "main": [
+          [
+            {
+              "node": "LinkedIn (Mock)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Image (Facebook)": {
+        "main": [
+          [
+            {
+              "node": "Facebook Graph API",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Image (Instagram)": {
+        "main": [
+          [
+            {
+              "node": "Instagram",
               "type": "main",
               "index": 0
             }
@@ -551,43 +811,29 @@
         "main": [
           [
             {
-              "node": "gemini linkedin post",
+              "node": "Roteador (Switch)",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Fetch Image": {
+      "Facebook Graph API": {
         "main": [
-          [
-            {
-              "node": "LinkedIn (Mock)",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       }
     },
     "authors": "Rogerio Maciel ",
-    "name": null,
-    "description": null,
-    "autosaved": false,
+    "name": "Version 09c598ee",
+    "description": "",
+    "autosaved": true,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-07-06T02:33:02.255Z",
-        "id": 7032,
+        "createdAt": "2026-07-06T14:07:53.529Z",
+        "id": 7035,
         "workflowId": "ibCEPsroSZuwWbVI",
-        "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
-        "event": "deactivated",
-        "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
-      },
-      {
-        "createdAt": "2026-07-06T02:33:02.479Z",
-        "id": 7033,
-        "workflowId": "ibCEPsroSZuwWbVI",
-        "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+        "versionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
         "event": "activated",
         "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
       }
