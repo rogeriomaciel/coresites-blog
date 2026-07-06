@@ -1,0 +1,322 @@
+{
+  "id": "ibCEPsroSZuwWbVI",
+  "name": "Social Media Auto-Publisher",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "post-social",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        256,
+        304
+      ],
+      "webhookId": "social-publish-trigger"
+    },
+    {
+      "parameters": {
+        "postAs": "organization",
+        "organization": "135145495",
+        "text": "={{ $json.content.parts[0].text }}",
+        "additionalFields": {}
+      },
+      "id": "linkedin-output",
+      "name": "LinkedIn (Mock)",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        304
+      ],
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "jcNEGkMkE5Lb90uW",
+          "name": "LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ 'Você é um social media expert. Crie um post engajador para o LinkedIn promovendo o seguinte artigo do nosso blog.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS IMPORTANTES:\\n1. Retorne APENAS o texto do post. Não inclua frases introdutórias (como \"Aqui está uma sugestão\").\\n2. O tom deve ser profissional e convidativo.\\n3. Termine sempre com uma chamada para ação clara contendo o link do artigo. NUNCA use formatação markdown para o link (ex: não use [Texto](URL)), coloque a URL nua e pura.\\n4. Adicione hashtags relevantes no final.' }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        304
+      ],
+      "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
+      "name": "gemini linkedin post",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XeGsz9eHLKBUyX6c",
+          "name": "Gemini Api Key Rogerio"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        192,
+        80
+      ],
+      "id": "8b52d30e-a994-4dab-b61a-9eeef1cc3dd3",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "gemini linkedin post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini linkedin post": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn (Mock)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "gemini linkedin post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {
+          "headers": {
+            "host": "api-staging.rogeriomaciel.com.br",
+            "x-real-ip": "177.2.116.239",
+            "x-forwarded-for": "177.2.116.239",
+            "connection": "upgrade",
+            "content-length": "363",
+            "user-agent": "curl/8.18.0",
+            "accept": "*/*",
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "title": "Por que oficinas mecânicas estão abandonando ERPs tradicionais e migrando para operações via WhatsApp",
+            "url": "https://coresites.com.br/post/abandono-erp-migracao-whatsapp",
+            "excerpt": "Aprenda por que forçar mecânicos a usar sistemas de gestão complexos é o maior erro da sua oficina, e como o WhatsApp se tornou o novo ERP."
+          },
+          "webhookUrl": "https://api-staging.rogeriomaciel.com.br/app/post-social",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "activeVersionId": "9320469f-dac6-4050-8af2-c171a9f3bfba",
+  "versionCounter": 28,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-07-05T22:33:03.527Z",
+      "createdAt": "2026-07-05T22:33:03.527Z",
+      "role": "workflow:owner",
+      "workflowId": "ibCEPsroSZuwWbVI",
+      "projectId": "6cxpgmtD52mXpR4c",
+      "project": {
+        "updatedAt": "2026-05-30T16:07:28.165Z",
+        "createdAt": "2026-05-30T15:13:32.872Z",
+        "id": "6cxpgmtD52mXpR4c",
+        "name": "Rogerio Maciel  <rogerio@rogeriomaciel.com.br>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "f50ee891-59a3-408d-8912-6247a92e84bf"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-07-06T01:46:35.812Z",
+    "createdAt": "2026-07-06T01:00:35.516Z",
+    "versionId": "9320469f-dac6-4050-8af2-c171a9f3bfba",
+    "workflowId": "ibCEPsroSZuwWbVI",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "post-social",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "webhook-trigger",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          256,
+          304
+        ],
+        "webhookId": "social-publish-trigger"
+      },
+      {
+        "parameters": {
+          "postAs": "organization",
+          "organization": "135145495",
+          "text": "={{ $json.content.parts[0].text }}",
+          "additionalFields": {}
+        },
+        "id": "linkedin-output",
+        "name": "LinkedIn (Mock)",
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          304
+        ],
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "jcNEGkMkE5Lb90uW",
+            "name": "LinkedIn account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "={{ 'Você é um social media expert. Crie um post engajador para o LinkedIn promovendo o seguinte artigo do nosso blog.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS IMPORTANTES:\\n1. Retorne APENAS o texto do post. Não inclua frases introdutórias (como \"Aqui está uma sugestão\").\\n2. O tom deve ser profissional e convidativo.\\n3. Termine sempre com uma chamada para ação clara contendo o link do artigo. NUNCA use formatação markdown para o link (ex: não use [Texto](URL)), coloque a URL nua e pura.\\n4. Adicione hashtags relevantes no final.' }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          304
+        ],
+        "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
+        "name": "gemini linkedin post",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "XeGsz9eHLKBUyX6c",
+            "name": "Gemini Api Key Rogerio"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          192,
+          80
+        ],
+        "id": "8b52d30e-a994-4dab-b61a-9eeef1cc3dd3",
+        "name": "When clicking ‘Execute workflow’"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gemini linkedin post": {
+        "main": [
+          [
+            {
+              "node": "LinkedIn (Mock)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Rogerio Maciel ",
+    "name": "Version 9320469f",
+    "description": "",
+    "autosaved": true,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-07-06T01:46:35.787Z",
+        "id": 7027,
+        "workflowId": "ibCEPsroSZuwWbVI",
+        "versionId": "9320469f-dac6-4050-8af2-c171a9f3bfba",
+        "event": "activated",
+        "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
+      }
+    ]
+  }
+}
