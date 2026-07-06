@@ -246,7 +246,8 @@
         "binaryPropertyName": "data",
         "options": {
           "bodyParametersJson": "={{ JSON.stringify({ message: $('gemini facebook post').item.json.text || $('gemini facebook post').item.json.content?.parts?.[0]?.text || $('gemini facebook post').item.json.content || $('gemini facebook post').item.json.response || 'Veja nosso novo artigo!' }) }}"
-        }
+        },
+        "graphApiVersion": "v25.0"
       },
       "type": "n8n-nodes-base.facebookGraphApi",
       "typeVersion": 1,
