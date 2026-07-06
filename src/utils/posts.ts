@@ -81,31 +81,55 @@ function parsePost(raw: string): Post {
     content = match[2]
 
     const lines = yaml.split('\n')
-    for (const line of lines) {
-      const trimmed = line.trim()
-      if (!trimmed || trimmed.startsWith('#')) continue
+    let currentKey: keyof PostFrontmatter | null = null
 
-      const colonIdx = trimmed.indexOf(':')
+    for (const line of lines) {
+      if (line.trim() === '' || line.trim().startsWith('#')) continue
+
+      // Se a linha começa com espaço, é continuação do key anterior (array ou multiline string)
+      if (line.match(/^\s+/) && currentKey) {
+        const trimmed = line.trim()
+        if (trimmed.startsWith('- ')) {
+          if (!Array.isArray(data[currentKey])) {
+            data[currentKey] = []
+          }
+          data[currentKey].push(trimmed.slice(2).trim().replace(/^["']|["']$/g, ''))
+        } else {
+          // Multiline string
+          if (data[currentKey] === '>-' || data[currentKey] === '|' || data[currentKey] === '') {
+            data[currentKey] = trimmed
+          } else {
+            data[currentKey] += ' ' + trimmed
+          }
+        }
+        continue
+      }
+
+      const colonIdx = line.indexOf(':')
       if (colonIdx === -1) continue
 
-      const key = trimmed.slice(0, colonIdx).trim()
-      let value = trimmed.slice(colonIdx + 1).trim()
+      const key = line.slice(0, colonIdx).trim() as keyof PostFrontmatter
+      let value = line.slice(colonIdx + 1).trim()
+      
+      currentKey = key
 
       if (value.startsWith('[') && value.endsWith(']')) {
         try {
-          data[key as keyof PostFrontmatter] = JSON.parse(value.replace(/'/g, '"'))
+          data[key] = JSON.parse(value.replace(/'/g, '"'))
         } catch {
-          data[key as keyof PostFrontmatter] = value.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, '')) as any
+          data[key] = value.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, '')) as any
         }
       } else if (value === 'true') {
-        data[key as keyof PostFrontmatter] = true as any
+        data[key] = true as any
       } else if (value === 'false') {
-        data[key as keyof PostFrontmatter] = false as any
+        data[key] = false as any
+      } else if (value === '') {
+        data[key] = [] as any // Preparar para possível array nas próximas linhas
       } else {
         if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
           value = value.slice(1, -1)
         }
-        data[key as keyof PostFrontmatter] = value as any
+        data[key] = value as any
       }
     }
   }
