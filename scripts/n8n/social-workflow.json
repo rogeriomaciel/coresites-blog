@@ -184,8 +184,8 @@
       }
     ]
   },
-  "activeVersionId": "9320469f-dac6-4050-8af2-c171a9f3bfba",
-  "versionCounter": 28,
+  "activeVersionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+  "versionCounter": 31,
   "triggerCount": 1,
   "shared": [
     {
@@ -206,5 +206,181 @@
       }
     }
   ],
-  "tags": []
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-07-06T02:33:01.791Z",
+    "createdAt": "2026-07-06T02:33:01.791Z",
+    "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+    "workflowId": "ibCEPsroSZuwWbVI",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "post-social",
+          "responseMode": "lastNode",
+          "options": {}
+        },
+        "id": "webhook-trigger",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          256,
+          304
+        ],
+        "webhookId": "social-publish-trigger"
+      },
+      {
+        "parameters": {
+          "postAs": "organization",
+          "organization": "135145495",
+          "text": "={{ $json.content.parts[0].text }}",
+          "additionalFields": {},
+          "shareMediaCategory": "IMAGE",
+          "imageBinaryProperty": "data"
+        },
+        "id": "linkedin-output",
+        "name": "LinkedIn (Mock)",
+        "type": "n8n-nodes-base.linkedIn",
+        "typeVersion": 1,
+        "position": [
+          1200,
+          304
+        ],
+        "credentials": {
+          "linkedInOAuth2Api": {
+            "id": "jcNEGkMkE5Lb90uW",
+            "name": "LinkedIn account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.5-flash"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "={{ 'Você é um social media expert. Crie um post engajador para o LinkedIn promovendo o seguinte artigo do nosso blog.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS IMPORTANTES:\\n1. Retorne APENAS o texto do post. Não inclua frases introdutórias (como \"Aqui está uma sugestão\").\\n2. O tom deve ser profissional e convidativo.\\n3. Termine sempre com uma chamada para ação clara contendo o link do artigo. NUNCA use formatação markdown para o link (ex: não use [Texto](URL)), coloque a URL nua e pura.\\n4. Adicione hashtags relevantes no final.' }}"
+              }
+            ]
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          304
+        ],
+        "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
+        "name": "gemini linkedin post",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "XeGsz9eHLKBUyX6c",
+            "name": "Gemini Api Key Rogerio"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          192,
+          80
+        ],
+        "id": "8b52d30e-a994-4dab-b61a-9eeef1cc3dd3",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+          "responseFormat": "file",
+          "options": {}
+        },
+        "id": "fetch-image-node",
+        "name": "Fetch Image",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          900,
+          304
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gemini linkedin post": {
+        "main": [
+          [
+            {
+              "node": "Fetch Image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Image": {
+        "main": [
+          [
+            {
+              "node": "LinkedIn (Mock)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Rogerio Maciel ",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-07-06T02:33:02.255Z",
+        "id": 7032,
+        "workflowId": "ibCEPsroSZuwWbVI",
+        "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+        "event": "deactivated",
+        "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
+      },
+      {
+        "createdAt": "2026-07-06T02:33:02.479Z",
+        "id": 7033,
+        "workflowId": "ibCEPsroSZuwWbVI",
+        "versionId": "8a52f24a-5892-4403-a86d-01d42a684559",
+        "event": "activated",
+        "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
+      }
+    ]
+  }
 }
