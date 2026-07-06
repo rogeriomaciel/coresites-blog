@@ -64,11 +64,12 @@ async function processPost(slug: string, postPath: string) {
   const payload = {
     title: data.title || slug,
     slug: slug,
+    network: network, // ENVIAR A REDE PARA O ROTEAMENTO DO N8N
     url: `${SITE_URL}/post/${slug}`,
     excerpt: data.excerpt || '',
     category: data.category || '',
     cover_image: data.cover_image || '',
-    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/\.svg$/, '.png')}?v=${Date.now()}` : '',
+    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/\.svg$/, network === 'instagram' ? '-sq.png' : '.png')}?v=${Date.now()}` : '',
     content: parsed.content.substring(0, 1500) + '...'
   }
 

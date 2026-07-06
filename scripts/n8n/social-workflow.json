@@ -36,8 +36,8 @@
       "type": "n8n-nodes-base.linkedIn",
       "typeVersion": 1,
       "position": [
-        1200,
-        304
+        1100,
+        100
       ],
       "credentials": {
         "linkedInOAuth2Api": {
@@ -68,7 +68,7 @@
       "typeVersion": 1.2,
       "position": [
         640,
-        304
+        100
       ],
       "id": "b06ab7f6-d849-4927-9096-d78e3529756f",
       "name": "gemini linkedin post",
@@ -97,12 +97,164 @@
         "options": {}
       },
       "id": "fetch-image-node",
-      "name": "Fetch Image",
+      "name": "Fetch Image (LinkedIn)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4,
       "position": [
-        900,
+        850,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.network }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "linkedin",
+              "output": 0
+            },
+            {
+              "value2": "facebook",
+              "output": 1
+            },
+            {
+              "value2": "instagram",
+              "output": 2
+            }
+          ]
+        }
+      },
+      "id": "switch-router",
+      "name": "Roteador (Switch)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        400,
         304
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ 'Você é um social media expert. Crie um post engajador para o Facebook promovendo o seguinte artigo.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS:\\n1. Retorne APENAS o texto.\\n2. Tom coloquial e amigável, convidando para ler e comentar.\\n3. Termine com a URL do artigo.' }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        304
+      ],
+      "id": "gemini-facebook",
+      "name": "gemini facebook post",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XeGsz9eHLKBUyX6c",
+          "name": "Gemini Api Key Rogerio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ 'Você é um social media expert. Crie uma legenda para o Instagram promovendo o artigo.\\n\\nTítulo: ' + $json.body.title + '\\nURL: ' + $json.body.url + '\\nResumo: ' + $json.body.excerpt + '\\n\\nREGRAS:\\n1. Retorne APENAS o texto.\\n2. Muito engajador, com emojis e CTA visual (Acesse o link na bio / Leia mais). Mande a URL também.\\n3. Hashtags virais no final.' }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        500
+      ],
+      "id": "gemini-instagram",
+      "name": "gemini instagram post",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "XeGsz9eHLKBUyX6c",
+          "name": "Gemini Api Key Rogerio"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+        "responseFormat": "file",
+        "options": {}
+      },
+      "id": "fetch-fb",
+      "name": "Fetch Image (Facebook)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        850,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+        "responseFormat": "file",
+        "options": {}
+      },
+      "id": "fetch-ig",
+      "name": "Fetch Image (Instagram)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        850,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "notice": "Conecte sua conta do Facebook Pages aqui e configure o campo de imagem e texto!"
+      },
+      "id": "fb-node",
+      "name": "Facebook Pages",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "notice": "Conecte sua conta do Instagram for Business aqui!"
+      },
+      "id": "ig-node",
+      "name": "Instagram",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        500
       ]
     }
   ],
@@ -111,7 +263,32 @@
       "main": [
         [
           {
+            "node": "Roteador (Switch)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Roteador (Switch)": {
+      "main": [
+        [
+          {
             "node": "gemini linkedin post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "gemini facebook post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "gemini instagram post",
             "type": "main",
             "index": 0
           }
@@ -122,29 +299,62 @@
       "main": [
         [
           {
-            "node": "Fetch Image",
+            "node": "Fetch Image (LinkedIn)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "When clicking ‘Execute workflow’": {
+    "gemini facebook post": {
       "main": [
         [
           {
-            "node": "gemini linkedin post",
+            "node": "Fetch Image (Facebook)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Fetch Image": {
+    "gemini instagram post": {
+      "main": [
+        [
+          {
+            "node": "Fetch Image (Instagram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Image (LinkedIn)": {
       "main": [
         [
           {
             "node": "LinkedIn (Mock)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Image (Facebook)": {
+      "main": [
+        [
+          {
+            "node": "Facebook Pages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Image (Instagram)": {
+      "main": [
+        [
+          {
+            "node": "Instagram",
             "type": "main",
             "index": 0
           }

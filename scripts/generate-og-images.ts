@@ -22,7 +22,6 @@ function wrapText(text: string, maxChars: number) {
   return lines
 }
 
-// Encontra o markdown baseado no nome da imagem
 function findPostFrontmatter(svgFilename: string) {
   const slug = svgFilename.replace(/\.svg$/, '')
   const rootPostPath = path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`)
@@ -44,89 +43,95 @@ function findPostFrontmatter(svgFilename: string) {
   }
 }
 
+async function renderImage(svgPath: string, outPath: string, width: number, height: number, frontmatter: any, maxCharsTitle: number, maxCharsExcerpt: number) {
+  try {
+    const baseImage = await sharp(svgPath, { density: 300 })
+      .resize(width, height, { 
+        fit: 'cover',
+        background: { r: 0, g: 0, b: 0, alpha: 1 } 
+      })
+      .toBuffer()
+
+    if (frontmatter) {
+      const titleLines = wrapText(frontmatter.title, maxCharsTitle)
+      const excerptLines = wrapText(frontmatter.excerpt, maxCharsExcerpt).slice(0, 3)
+
+      const titleLineHeight = width === 1080 ? 64 : 64
+      const excerptLineHeight = width === 1080 ? 40 : 40
+      
+      const totalExcerptHeight = excerptLines.length * excerptLineHeight
+      const excerptStartY = height - (width === 1080 ? 50 : 30) - totalExcerptHeight
+
+      const totalTitleHeight = titleLines.length * titleLineHeight
+      const titleStartY = excerptStartY - totalTitleHeight - 30
+
+      let textSvg = `
+      <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="black" stop-opacity="0.0"/>
+            <stop offset="${width === 1080 ? '50%' : '25%'}" stop-color="black" stop-opacity="${width === 1080 ? '0.1' : '0.2'}"/>
+            <stop offset="${width === 1080 ? '75%' : '60%'}" stop-color="black" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0.95"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="${width}" height="${height}" fill="url(#grad)" />
+      `
+      
+      let currY = titleStartY
+      for (const line of titleLines) {
+        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-weight="bold" font-size="52" fill="#ffffff">${line}</text>`
+        currY += titleLineHeight
+      }
+
+      currY = excerptStartY
+      for (const line of excerptLines) {
+        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-size="28" fill="#e0e0e0">${line}</text>`
+        currY += excerptLineHeight
+      }
+
+      textSvg += `\n</svg>`
+
+      await sharp(baseImage)
+        .composite([{ input: Buffer.from(textSvg), blend: 'over' }])
+        .png()
+        .toFile(outPath)
+    } else {
+      await sharp(baseImage).png().toFile(outPath)
+    }
+  } catch (err) {
+    console.error(`❌ Erro ao renderizar ${outPath}:`, err)
+  }
+}
+
 async function generatePngFromSvg() {
   const dirs = [POST_IMAGES_DIR_CORE, POST_IMAGES_DIR_ROOT]
 
   for (const dir of dirs) {
-    if (!fs.existsSync(dir)) {
-      continue
-    }
+    if (!fs.existsSync(dir)) continue
 
     const files = fs.readdirSync(dir)
     const svgFiles = files.filter(f => f.endsWith('.svg'))
 
     if (svgFiles.length > 0) {
-      console.log(`[OG Images] Encontrados ${svgFiles.length} arquivos .svg em ${dir}. Iniciando conversão com tipografia injetada...`)
+      console.log(`[OG Images] Encontrados ${svgFiles.length} arquivos .svg em ${dir}. Iniciando conversão dupla (Wide e Square)...`)
 
       for (const file of svgFiles) {
         const svgPath = path.join(dir, file)
-        const pngFilename = file.replace(/\.svg$/, '.png')
-        const pngPath = path.join(dir, pngFilename)
+        
+        // Caminhos de saída
+        const pngWidePath = path.join(dir, file.replace(/\.svg$/, '.png'))
+        const pngSquarePath = path.join(dir, file.replace(/\.svg$/, '-sq.png'))
 
-        try {
-          const baseImage = await sharp(svgPath, { density: 300 })
-            .resize(1200, 630, { 
-              fit: 'cover',
-              background: { r: 0, g: 0, b: 0, alpha: 1 } 
-            })
-            .toBuffer()
+        const frontmatter = findPostFrontmatter(file)
+        
+        // Renderiza formato OG Wide (1200x630)
+        await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
+        
+        // Renderiza formato IG Square (1080x1080)
+        await renderImage(svgPath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
 
-          const frontmatter = findPostFrontmatter(file)
-          
-          if (frontmatter) {
-            const titleLines = wrapText(frontmatter.title, 32)
-            const excerptLines = wrapText(frontmatter.excerpt, 68).slice(0, 3)
-
-            const titleLineHeight = 64
-            const excerptLineHeight = 40
-            
-            const totalExcerptHeight = excerptLines.length * excerptLineHeight
-            const excerptStartY = 600 - totalExcerptHeight
-
-            const totalTitleHeight = titleLines.length * titleLineHeight
-            const titleStartY = excerptStartY - totalTitleHeight - 30
-
-            let textSvg = `
-            <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="black" stop-opacity="0.0"/>
-                  <stop offset="25%" stop-color="black" stop-opacity="0.2"/>
-                  <stop offset="60%" stop-color="black" stop-opacity="0.75"/>
-                  <stop offset="100%" stop-color="black" stop-opacity="0.95"/>
-                </linearGradient>
-              </defs>
-              <rect x="0" y="0" width="1200" height="630" fill="url(#grad)" />
-            `
-            
-            let currY = titleStartY
-            for (const line of titleLines) {
-              textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-weight="bold" font-size="52" fill="#ffffff">${line}</text>`
-              currY += titleLineHeight
-            }
-
-            currY = excerptStartY
-            for (const line of excerptLines) {
-              textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-size="28" fill="#e0e0e0">${line}</text>`
-              currY += excerptLineHeight
-            }
-
-            textSvg += `\n</svg>`
-
-            await sharp(baseImage)
-              .composite([{ input: Buffer.from(textSvg), blend: 'over' }])
-              .png()
-              .toFile(pngPath)
-
-          } else {
-            // Fallback: se não encontrar o post, apenas gera a imagem sem texto
-            await sharp(baseImage).png().toFile(pngPath)
-          }
-
-          console.log(`✅ Convertido e injetado: ${file} -> ${pngFilename}`)
-        } catch (err) {
-          console.error(`❌ Erro ao converter ${file}:`, err)
-        }
+        console.log(`✅ Dupla versão gerada para: ${file}`)
       }
     }
   }

@@ -70,7 +70,12 @@ fi
 
 echo ""
 echo "📱 5. Disparando publicações para redes sociais (Batch Mode)..."
+echo "-> Enviando fila para o LinkedIn..."
 bun run scripts/trigger-n8n.ts all --batch --network linkedin
+echo "-> Enviando fila para o Facebook..."
+bun run scripts/trigger-n8n.ts all --batch --network facebook
+echo "-> Enviando fila para o Instagram..."
+bun run scripts/trigger-n8n.ts all --batch --network instagram
 
 echo ""
 echo "========================================"
