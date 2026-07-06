@@ -1,16 +1,34 @@
 ---
-title: "O que é GEO e como otimizar conteúdo para IAs"
-slug: "o-que-e-geo-otimizar-conteudo-para-ias"
-date: "2026-07-01"
-author: "Rogério Maciel"
-excerpt: "Entenda o que é Generative Engine Optimization (GEO) e aprenda a criar conteúdo que as IAs citam como referência."
-meta_title: "O que é GEO (Generative Engine Optimization) e Como Otimizar para IAs | CoreSites Blog"
-meta_description: "Guia prático sobre GEO — a otimização de conteúdo para motores de IA como Gemini, ChatGPT e Perplexity. Aprenda a ser citado como fonte."
-keywords: ["geo", "generative engine optimization", "seo para ia", "chatgpt", "gemini", "perplexity"]
-category: "IA"
-tags: ["geo", "seo", "ia", "conteúdo"]
-cover_image: "/images/posts/geo-otimizacao.svg"
+title: O que é GEO e como otimizar conteúdo para IAs
+slug: o-que-e-geo-otimizar-conteudo-para-ias
+date: '2026-07-01'
+author: Rogério Maciel
+excerpt: >-
+  Entenda o que é Generative Engine Optimization (GEO) e aprenda a criar
+  conteúdo que as IAs citam como referência.
+meta_title: >-
+  O que é GEO (Generative Engine Optimization) e Como Otimizar para IAs |
+  CoreSites Blog
+meta_description: >-
+  Guia prático sobre GEO — a otimização de conteúdo para motores de IA como
+  Gemini, ChatGPT e Perplexity. Aprenda a ser citado como fonte.
+keywords:
+  - geo
+  - generative engine optimization
+  - seo para ia
+  - chatgpt
+  - gemini
+  - perplexity
+category: IA
+tags:
+  - geo
+  - seo
+  - ia
+  - conteúdo
+cover_image: /images/posts/geo-otimizacao.svg
 published: true
+social_published:
+  - linkedin
 ---
 
 ## O que é GEO?

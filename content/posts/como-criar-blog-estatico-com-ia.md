@@ -1,16 +1,35 @@
 ---
-title: "Como Criar um Blog Estático com IA que Supera o WordPress"
-slug: "como-criar-blog-estatico-com-ia"
-date: "2026-07-02"
-author: "Rogério Maciel"
-excerpt: "Descubra como construir um blog ultra-rápido sem WordPress usando React, Vite e inteligência artificial. Um guia completo sobre a arquitetura GitOps de conteúdo."
-meta_title: "Como Criar um Blog Estático com IA que Supera o WordPress | CoreSites Blog"
-meta_description: "Guia completo para criar um blog estático com React e Vite, otimizado para SEO e alimentado por IA. Sem WordPress, sem banco de dados, performance absurda."
-keywords: ["blog estático", "react", "vite", "seo", "ia", "wordpress alternativa", "gitops", "nginx"]
-category: "Desenvolvimento"
-tags: ["react", "vite", "seo", "ia"]
-cover_image: "/images/posts/blog-estatico-ia.svg"
+title: Como Criar um Blog Estático com IA que Supera o WordPress
+slug: como-criar-blog-estatico-com-ia
+date: '2026-07-02'
+author: Rogério Maciel
+excerpt: >-
+  Descubra como construir um blog ultra-rápido sem WordPress usando React, Vite
+  e inteligência artificial. Um guia completo sobre a arquitetura GitOps de
+  conteúdo.
+meta_title: Como Criar um Blog Estático com IA que Supera o WordPress | CoreSites Blog
+meta_description: >-
+  Guia completo para criar um blog estático com React e Vite, otimizado para SEO
+  e alimentado por IA. Sem WordPress, sem banco de dados, performance absurda.
+keywords:
+  - blog estático
+  - react
+  - vite
+  - seo
+  - ia
+  - wordpress alternativa
+  - gitops
+  - nginx
+category: Desenvolvimento
+tags:
+  - react
+  - vite
+  - seo
+  - ia
+cover_image: /images/posts/blog-estatico-ia.svg
 published: true
+social_published:
+  - linkedin
 ---
 
 ## Por que abandonar o WordPress?

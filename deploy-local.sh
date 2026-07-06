@@ -69,6 +69,10 @@ else
 fi
 
 echo ""
+echo "📱 5. Disparando publicações para redes sociais (Batch Mode)..."
+bun run scripts/trigger-n8n.ts all --batch --network linkedin
+
+echo ""
 echo "========================================"
 echo "  ✅ Publish concluído com sucesso!"
 echo "========================================"

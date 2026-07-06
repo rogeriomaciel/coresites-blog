@@ -1,16 +1,33 @@
 ---
-title: "Automação de Conteúdo com GitOps: Do Prompt ao Deploy em 2 Minutos"
-slug: "automacao-conteudo-gitops-prompt-deploy"
-date: "2026-06-30"
-author: "Rogério Maciel"
-excerpt: "Como construir uma esteira automatizada que transforma um prompt em artigo publicado, usando Git, CI/CD e IA."
-meta_title: "Automação de Conteúdo com GitOps: Do Prompt ao Deploy | CoreSites Blog"
-meta_description: "Aprenda a construir uma pipeline de automação de conteúdo usando GitOps, IA e CI/CD. Do prompt ao artigo publicado em minutos."
-keywords: ["gitops", "automação", "ci/cd", "conteúdo", "ia", "deploy", "github actions"]
-category: "Automação"
-tags: ["gitops", "ci/cd", "automação", "deploy"]
-cover_image: "/images/posts/gitops-automacao.svg"
+title: 'Automação de Conteúdo com GitOps: Do Prompt ao Deploy em 2 Minutos'
+slug: automacao-conteudo-gitops-prompt-deploy
+date: '2026-06-30'
+author: Rogério Maciel
+excerpt: >-
+  Como construir uma esteira automatizada que transforma um prompt em artigo
+  publicado, usando Git, CI/CD e IA.
+meta_title: 'Automação de Conteúdo com GitOps: Do Prompt ao Deploy | CoreSites Blog'
+meta_description: >-
+  Aprenda a construir uma pipeline de automação de conteúdo usando GitOps, IA e
+  CI/CD. Do prompt ao artigo publicado em minutos.
+keywords:
+  - gitops
+  - automação
+  - ci/cd
+  - conteúdo
+  - ia
+  - deploy
+  - github actions
+category: Automação
+tags:
+  - gitops
+  - ci/cd
+  - automação
+  - deploy
+cover_image: /images/posts/gitops-automacao.svg
 published: true
+social_published:
+  - linkedin
 ---
 
 ## O Conceito de GitOps para Conteúdo
