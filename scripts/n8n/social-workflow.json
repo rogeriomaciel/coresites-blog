@@ -105,35 +105,6 @@
     },
     {
       "parameters": {
-        "dataType": "string",
-        "value1": "={{ $json.body.network }}",
-        "rules": {
-          "rules": [
-            {
-              "value2": "linkedin"
-            },
-            {
-              "value2": "facebook",
-              "output": 1
-            },
-            {
-              "value2": "instagram",
-              "output": 2
-            }
-          ]
-        }
-      },
-      "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
-      "name": "Roteador (Switch)",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 1,
-      "position": [
-        768,
-        240
-      ]
-    },
-    {
-      "parameters": {
         "modelId": {
           "__rl": true,
           "value": "models/gemini-2.5-flash",
@@ -200,7 +171,7 @@
     },
     {
       "parameters": {
-        "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+        "url": "={{ $('Router').item.json.body.cover_image_url }}",
         "options": {}
       },
       "id": "9eaa6f05-6f0a-4e34-b9ea-c337f8ddcf58",
@@ -239,18 +210,29 @@
     },
     {
       "parameters": {
-        "httpRequestMethod": "POST",
-        "node": "61591675503932",
-        "edge": "photos",
-        "sendBinaryData": true,
-        "binaryPropertyName": "data",
-        "options": {
-          "bodyParametersJson": "={{ JSON.stringify({ message: $('gemini facebook post').item.json.text || $('gemini facebook post').item.json.content?.parts?.[0]?.text || $('gemini facebook post').item.json.content || $('gemini facebook post').item.json.response || 'Veja nosso novo artigo!' }) }}"
+        "method": "POST",
+        "url": "https://graph.facebook.com/v25.0/1251060468085358/photos",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "facebookGraphApi",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "caption",
+              "value": "={{ $('gemini facebook post').item.json.text || $('gemini facebook post').item.json.content?.parts?.[0]?.text || $('gemini facebook post').item.json.content || $('gemini facebook post').item.json.response || 'Veja nosso novo artigo!' }}"
+            },
+            {
+              "parameterType": "formBinaryData",
+              "name": "=file",
+              "inputDataFieldName": "={{ $binary.data }}"
+            }
+          ]
         },
-        "graphApiVersion": "v25.0"
+        "options": {}
       },
-      "type": "n8n-nodes-base.facebookGraphApi",
-      "typeVersion": 1,
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
       "position": [
         1776,
         272
@@ -263,6 +245,35 @@
           "name": "Facebook Graph account"
         }
       }
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.network }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "linkedin"
+            },
+            {
+              "value2": "facebook",
+              "output": 1
+            },
+            {
+              "value2": "instagram",
+              "output": 2
+            }
+          ]
+        }
+      },
+      "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
+      "name": "Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        768,
+        240
+      ]
     }
   ],
   "connections": {
@@ -270,32 +281,7 @@
       "main": [
         [
           {
-            "node": "Roteador (Switch)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Roteador (Switch)": {
-      "main": [
-        [
-          {
-            "node": "gemini linkedin post",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "gemini facebook post",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "gemini instagram post",
+            "node": "Router",
             "type": "main",
             "index": 0
           }
@@ -372,7 +358,7 @@
       "main": [
         [
           {
-            "node": "Roteador (Switch)",
+            "node": "Router",
             "type": "main",
             "index": 0
           }
@@ -382,6 +368,31 @@
     "Facebook Graph API": {
       "main": [
         []
+      ]
+    },
+    "Router": {
+      "main": [
+        [
+          {
+            "node": "gemini linkedin post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "gemini facebook post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "gemini instagram post",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -399,17 +410,24 @@
             "x-real-ip": "177.2.116.239",
             "x-forwarded-for": "177.2.116.239",
             "connection": "upgrade",
-            "content-length": "363",
-            "user-agent": "curl/8.18.0",
+            "content-length": "2141",
+            "content-type": "application/json",
+            "user-agent": "Bun/1.3.14",
             "accept": "*/*",
-            "content-type": "application/json"
+            "accept-encoding": "gzip, deflate, br, zstd"
           },
           "params": {},
           "query": {},
           "body": {
-            "title": "Por que oficinas mecânicas estão abandonando ERPs tradicionais e migrando para operações via WhatsApp",
-            "url": "https://coresites.com.br/post/abandono-erp-migracao-whatsapp",
-            "excerpt": "Aprenda por que forçar mecânicos a usar sistemas de gestão complexos é o maior erro da sua oficina, e como o WhatsApp se tornou o novo ERP."
+            "title": "Por que a maioria dos CRMs para oficina falha na prática (e como resolver isso)",
+            "slug": "por-que-crms-oficina-falham",
+            "network": "facebook",
+            "url": "https://blog.coreautocrm.com.br/post/por-que-crms-oficina-falham",
+            "excerpt": "Você comprou um sistema de CRM, mas ninguém alimenta os dados? Descubra por que a digitação manual está matando suas vendas automotivas.",
+            "category": "Gestão",
+            "cover_image": "/images/posts/por-que-crms-oficina-falham.svg",
+            "cover_image_url": "https://blog.coreautocrm.com.br/images/posts/por-que-crms-oficina-falham.png?v=1783347343681",
+            "content": "\nA cena é clássica: o dono da oficina mecânica vai a uma feira do setor automotivo, assiste a uma palestra incrível sobre \"Aumentar as vendas retendo clientes\", e decide comprar o melhor CRM (Customer Relationship Management) do mercado. \n\nDurante a primeira semana, tudo é lindo. Na segunda semana, a oficina enche de carros. O consultor técnico fica sobrecarregado, o telefone não para de tocar, e adivinhe o que ele deixa de fazer? **Ele para de alimentar o CRM.**\n\nTrês meses depois, o sistema virou um cemitério de dados desatualizados, e o gestor cancela a assinatura dizendo que \"CRM não funciona para oficina\". Mas a verdade é outra.\n\n## O problema não é o CRM. É o teclado.\n\nO calcanhar de Aquiles de qualquer CRM tradicional é que ele exige **Data Entry** (Entrada de Dados Manual). O sistema pede que, após cada ligação ou atendimento de balcão, o funcionário abra uma aba, digite o que conversou com o cliente e agende uma data de retorno. \n\nNa teoria, é perfeito. Na loucura do pátio de uma oficina real, é impossível. A falha dos CRMs antigos é presumir que a sua equipe tem tempo livre para atuar como digitadora.\n\n## O CoreAutoCRM e o fim do \"Data Entry\"\n\nPara resolver essa falha estrutural, o [**CoreAutoCRM** inverteu a lógica de funcionamento adotando o modelo AI-Native](/post/oficina-ai-native-gestao-automotiva). O sistema não pede para você digitar o que conversou com o cliente; ele **escuta a sua conversa natural (via WhatsApp) e preenche o CRM sozinho**.\n\nComo isso é poss..."
           },
           "webhookUrl": "https://api-staging.rogeriomaciel.com.br/app/post-social",
           "executionMode": "production"
@@ -417,8 +435,8 @@
       }
     ]
   },
-  "activeVersionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
-  "versionCounter": 52,
+  "activeVersionId": "03626534-fe6c-41ef-a348-6a73f138b1d0",
+  "versionCounter": 80,
   "triggerCount": 1,
   "shared": [
     {
@@ -441,9 +459,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-07-06T14:07:53.556Z",
-    "createdAt": "2026-07-06T14:07:48.356Z",
-    "versionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
+    "updatedAt": "2026-07-06T14:47:02.484Z",
+    "createdAt": "2026-07-06T14:47:02.484Z",
+    "versionId": "03626534-fe6c-41ef-a348-6a73f138b1d0",
     "workflowId": "ibCEPsroSZuwWbVI",
     "nodes": [
       {
@@ -467,7 +485,7 @@
         "parameters": {
           "postAs": "organization",
           "organization": "135145495",
-          "text": "={{ $json.content.parts[0].text }}",
+          "text": "={{ $('gemini linkedin post').item.json.text || $('gemini linkedin post').item.json.content?.parts?.[0]?.text || $('gemini linkedin post').item.json.content || $('gemini linkedin post').item.json.response }}",
           "shareMediaCategory": "IMAGE",
           "additionalFields": {}
         },
@@ -546,35 +564,6 @@
       },
       {
         "parameters": {
-          "dataType": "string",
-          "value1": "={{ $json.body.network }}",
-          "rules": {
-            "rules": [
-              {
-                "value2": "linkedin"
-              },
-              {
-                "value2": "facebook",
-                "output": 1
-              },
-              {
-                "value2": "instagram",
-                "output": 2
-              }
-            ]
-          }
-        },
-        "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
-        "name": "Roteador (Switch)",
-        "type": "n8n-nodes-base.switch",
-        "typeVersion": 1,
-        "position": [
-          768,
-          240
-        ]
-      },
-      {
-        "parameters": {
           "modelId": {
             "__rl": true,
             "value": "models/gemini-2.5-flash",
@@ -641,7 +630,7 @@
       },
       {
         "parameters": {
-          "url": "={{ $('Webhook').item.json.body.cover_image_url }}",
+          "url": "={{ $('Router').item.json.body.cover_image_url }}",
           "options": {}
         },
         "id": "9eaa6f05-6f0a-4e34-b9ea-c337f8ddcf58",
@@ -680,17 +669,26 @@
       },
       {
         "parameters": {
-          "httpRequestMethod": "POST",
-          "graphApiVersion": "v25.0",
-          "node": "61591675503932",
-          "edge": "feed",
+          "method": "POST",
+          "url": "https://graph.facebook.com/v25.0/61591675503932/photos",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "facebookGraphApi",
+          "sendBody": true,
+          "contentType": "multipart-form-data",
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "caption",
+                "value": "={{ $('gemini facebook post').item.json.text || $('gemini facebook post').item.json.content?.parts?.[0]?.text || $('gemini facebook post').item.json.content || $('gemini facebook post').item.json.response || 'Veja nosso novo artigo!' }}"
+              }
+            ]
+          },
           "sendBinaryData": true,
-          "options": {
-            "queryParametersJson": "{\n  message: \"texto\"\n}"
-          }
+          "binaryPropertyName": "data",
+          "options": {}
         },
-        "type": "n8n-nodes-base.facebookGraphApi",
-        "typeVersion": 1,
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
         "position": [
           1776,
           272
@@ -703,6 +701,35 @@
             "name": "Facebook Graph account"
           }
         }
+      },
+      {
+        "parameters": {
+          "dataType": "string",
+          "value1": "={{ $json.body.network }}",
+          "rules": {
+            "rules": [
+              {
+                "value2": "linkedin"
+              },
+              {
+                "value2": "facebook",
+                "output": 1
+              },
+              {
+                "value2": "instagram",
+                "output": 2
+              }
+            ]
+          }
+        },
+        "id": "6d24f7d7-d2b4-4d2a-b863-25da8e88d076",
+        "name": "Router",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 1,
+        "position": [
+          768,
+          240
+        ]
       }
     ],
     "connections": {
@@ -710,32 +737,7 @@
         "main": [
           [
             {
-              "node": "Roteador (Switch)",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Roteador (Switch)": {
-        "main": [
-          [
-            {
-              "node": "gemini linkedin post",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "gemini facebook post",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "gemini instagram post",
+              "node": "Router",
               "type": "main",
               "index": 0
             }
@@ -812,7 +814,7 @@
         "main": [
           [
             {
-              "node": "Roteador (Switch)",
+              "node": "Router",
               "type": "main",
               "index": 0
             }
@@ -823,18 +825,51 @@
         "main": [
           []
         ]
+      },
+      "Router": {
+        "main": [
+          [
+            {
+              "node": "gemini linkedin post",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "gemini facebook post",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "gemini instagram post",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Rogerio Maciel ",
-    "name": "Version 09c598ee",
-    "description": "",
-    "autosaved": true,
+    "name": null,
+    "description": null,
+    "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-07-06T14:07:53.529Z",
-        "id": 7035,
+        "createdAt": "2026-07-06T14:47:02.958Z",
+        "id": 7040,
         "workflowId": "ibCEPsroSZuwWbVI",
-        "versionId": "09c598ee-f3fb-4736-98cd-aeb3f634db5d",
+        "versionId": "03626534-fe6c-41ef-a348-6a73f138b1d0",
+        "event": "deactivated",
+        "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
+      },
+      {
+        "createdAt": "2026-07-06T14:47:03.278Z",
+        "id": 7041,
+        "workflowId": "ibCEPsroSZuwWbVI",
+        "versionId": "03626534-fe6c-41ef-a348-6a73f138b1d0",
         "event": "activated",
         "userId": "f50ee891-59a3-408d-8912-6247a92e84bf"
       }
