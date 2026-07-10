@@ -3,39 +3,42 @@
    Dark mode premium com tema configurável via CSS variables
    ============================================================ */
 
-/* ── Theme Variables (trocar aqui muda tudo) ─────────────── */
+/* ── Theme Variables — Paleta CoreAutoCRM (coreautocrm.com.br) ── */
 :root {
-  /* Primary accent — Azul Corporativo CoreAuto */
+  /* Primary accent — Electric Blue (#2f80ed) */
   --accent-h: 214;
-  --accent-s: 72%;
-  --accent-l: 40%;
-  --accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
-  --accent-light: hsl(var(--accent-h), var(--accent-s), 60%);
-  --accent-dark: hsl(var(--accent-h), var(--accent-s), 35%);
-  --accent-glow: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.15);
-  --accent-glow-strong: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
+  --accent-s: 84%;
+  --accent-l: 56%;
+  --accent: #2f80ed;
+  --accent-light: #5a9ef4;
+  --accent-dark: #1a5fc0;
+  --accent-glow: rgba(47, 128, 237, 0.15);
+  --accent-glow-strong: rgba(47, 128, 237, 0.3);
 
-  /* Background layers */
-  --bg-primary: #0a0a12;
-  --bg-secondary: #0f0f1a;
-  --bg-card: #12121f;
-  --bg-card-hover: #181830;
-  --bg-elevated: #1a1a2e;
-  --bg-code: #0d0d19;
+  /* Neon highlight — Cyan (#00c2ff) */
+  --neon: #00c2ff;
+
+  /* Background layers — Navy deep */
+  --bg-primary: #08131d;
+  --bg-secondary: #0d1b2a;
+  --bg-card: #0d1b2a;
+  --bg-card-hover: #112235;
+  --bg-elevated: #112235;
+  --bg-code: #060f18;
 
   /* Text */
-  --text-primary: #f0f0f5;
-  --text-secondary: #a0a0b8;
-  --text-muted: #6a6a82;
+  --text-primary: #e6ecf3;
+  --text-secondary: #8da3b8;
+  --text-muted: #4d6a82;
   --text-accent: var(--accent-light);
 
   /* Borders */
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-card: rgba(255, 255, 255, 0.08);
-  --border-accent: hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
+  --border-accent: rgba(47, 128, 237, 0.3);
 
   /* Glassmorphism */
-  --glass-bg: rgba(18, 18, 31, 0.6);
+  --glass-bg: rgba(13, 27, 42, 0.6);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-blur: 20px;
 
