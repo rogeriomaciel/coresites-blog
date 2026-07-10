@@ -5,10 +5,10 @@
 
 /* ── Theme Variables (trocar aqui muda tudo) ─────────────── */
 :root {
-  /* Primary accent — Azul/Ciano (configurável) */
-  --accent-h: 199;
-  --accent-s: 89%;
-  --accent-l: 48%;
+  /* Primary accent — Azul Corporativo CoreAuto */
+  --accent-h: 214;
+  --accent-s: 72%;
+  --accent-l: 40%;
   --accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
   --accent-light: hsl(var(--accent-h), var(--accent-s), 60%);
   --accent-dark: hsl(var(--accent-h), var(--accent-s), 35%);
