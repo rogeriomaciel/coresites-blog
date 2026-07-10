@@ -298,6 +298,12 @@ ul, ol {
   margin-bottom: var(--space-md);
 }
 
+.hero-logo-image {
+  height: clamp(48px, 8vw, 80px);
+  width: auto;
+  object-fit: contain;
+}
+
 .hero-title .gradient-text {
   background: linear-gradient(135deg, var(--accent), var(--accent-light), hsl(260, 80%, 70%));
   -webkit-background-clip: text;

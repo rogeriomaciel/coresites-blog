@@ -19,12 +19,7 @@ export default function Home() {
   const featuredPost = !query ? posts[0] : undefined
   const gridPosts = !query ? posts.slice(1) : posts
 
-  const siteName = import.meta.env.VITE_SITE_NAME || 'CoreSites Blog'
   const siteDescription = import.meta.env.VITE_SITE_DESCRIPTION || 'Artigos sobre tecnologia, IA, automação e desenvolvimento. Conteúdo prático para resolver problemas reais.'
-  
-  const nameParts = siteName.split(' ')
-  const firstWord = nameParts[0]
-  const restOfName = nameParts.slice(1).join(' ')
 
   return (
     <>
@@ -33,7 +28,11 @@ export default function Home() {
       <section className="hero">
         <div className="container">
           <h1 className="hero-title">
-            <span className="gradient-text">{firstWord}</span> {restOfName}
+            <img
+              src="/logo-coreauto-horizontal.png"
+              alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+              className="hero-logo-image"
+            />
           </h1>
           <p className="hero-subtitle">
             {siteDescription}
