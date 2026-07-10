@@ -5,6 +5,7 @@ import ArticleRenderer from '../components/ArticleRenderer'
 import ReadingProgress from '../components/ReadingProgress'
 import ShareButtons from '../components/ShareButtons'
 import PostCard from '../components/PostCard'
+import PromoBanner from '../components/PromoBanner'
 import { getPostBySlug, getRelatedPosts, formatDate, resolveAssetPath } from '../utils/posts'
 
 export default function PostPage() {
@@ -163,6 +164,11 @@ export default function PostPage() {
           </div>
         </section>
       )}
+
+      {/* Promo CTA Banner */}
+      <div className="container" style={{ paddingBottom: 0 }}>
+        <PromoBanner />
+      </div>
     </>
   )
 }

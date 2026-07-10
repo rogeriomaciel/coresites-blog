@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useMemo } from 'react'
 import SEOHead from '../components/SEOHead'
 import PostCard from '../components/PostCard'
+import PromoBanner from '../components/PromoBanner'
 import { getPostsByCategory } from '../utils/posts'
 
 export default function CategoryPage() {
@@ -45,6 +46,7 @@ export default function CategoryPage() {
             {posts.map((post) => (
               <PostCard key={post.frontmatter.slug} post={post} />
             ))}
+            <PromoBanner />
           </div>
         ) : (
           <div className="empty-state" id="category-empty">

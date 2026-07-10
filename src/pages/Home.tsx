@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import SEOHead from '../components/SEOHead'
 import PostCard from '../components/PostCard'
+import PromoBanner from '../components/PromoBanner'
 import { getAllPosts, getAllCategories, searchPosts, resolveAssetPath } from '../utils/posts'
 
 export default function Home() {
@@ -111,6 +112,7 @@ export default function Home() {
               {gridPosts.map((post) => (
                 <PostCard key={post.frontmatter.slug} post={post} />
               ))}
+              <PromoBanner />
             </div>
           </>
         ) : (
