@@ -209,6 +209,17 @@ ul, ol {
   font-weight: 800;
 }
 
+.header-logo-image {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity var(--transition-fast);
+}
+
+.header-logo:hover .header-logo-image {
+  opacity: 0.85;
+}
+
 .header-nav {
   display: flex;
   align-items: center;
