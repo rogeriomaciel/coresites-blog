@@ -4,9 +4,14 @@ export default function Footer() {
   return (
     <footer className="footer" id="main-footer">
       <div className="footer-inner">
-        <p className="footer-text">
-          &copy; {year} {import.meta.env.VITE_SITE_NAME || 'CoreSites'}. {import.meta.env.VITE_COPYRIGHT_TEXT || 'Todos os direitos reservados.'}
-        </p>
+        <div className="footer-text">
+          <img
+            src="/logo-coreauto-horizontal.png"
+            alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+            className="footer-logo-image"
+          />
+          <span>&copy; {year} {import.meta.env.VITE_COPYRIGHT_TEXT || 'Todos os direitos reservados.'}</span>
+        </div>
         <div className="footer-links">
           {import.meta.env.VITE_SOCIAL_GITHUB && (
             <a
