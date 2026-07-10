@@ -30,7 +30,7 @@ export function generateArticleJsonLd(
       name: SITE_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/favicon.svg`,
+        url: `${SITE_URL}/logo-coreauto.png`,
       },
     },
     mainEntityOfPage: {
