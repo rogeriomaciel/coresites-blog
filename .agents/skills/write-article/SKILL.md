@@ -32,6 +32,8 @@ Cada artigo deve ser um arquivo `.md` com o nome igual ao slug.
 
 ### Estrutura Obrigatória do Frontmatter
 
+**REQUISITO DE SEO CRÍTICO**: Sempre defina os campos `title`, `excerpt`, `meta_title` e `meta_description` como strings de linha única envoltas por aspas simples (`'`). NUNCA utilize ou permita a formatação com indicadores de bloco dobrado (`>-` ou block scalars), pois as quebras de linha introduzidas por esses blocos quebram a renderização correta de tags de metadados HTML de SEO.
+
 ```yaml
 ---
 title: "Título do artigo focado em conversão"

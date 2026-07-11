@@ -94,7 +94,7 @@ async function processPost(slug: string, postPath: string) {
       publishedNetworks.push(network)
       parsed.data.social_published = publishedNetworks
       
-      const updatedMarkdown = matter.stringify(parsed.content, parsed.data)
+      const updatedMarkdown = matter.stringify(parsed.content, parsed.data, { lineWidth: -1 } as any)
       fs.writeFileSync(postPath, updatedMarkdown, 'utf-8')
       console.log(`📝 Arquivo Markdown atualizado: '${network}' adicionado em social_published.`)
     }
