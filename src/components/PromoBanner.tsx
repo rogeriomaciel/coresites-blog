@@ -34,7 +34,7 @@ export default function PromoBanner() {
 
           {/* Subtitle */}
           <p className="promo-banner-subtitle">
-            Recupere até R$ 12.000/mês com follow-up inteligente pelo WhatsApp,
+            Recupere até R$ 12.000/mês (estancando mais de 70% desse desperdício) com follow-up inteligente pelo WhatsApp,
             comando de voz para o mecânico e painel TV para o pátio.
             Setup completo em 48h.
           </p>
