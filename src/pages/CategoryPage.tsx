@@ -4,14 +4,16 @@ import SEOHead from '../components/SEOHead'
 import PostCard from '../components/PostCard'
 import PromoBanner from '../components/PromoBanner'
 import { getPostsByCategory } from '../utils/posts'
+import { useI18n } from '../utils/i18n'
 
 export default function CategoryPage() {
   const { category } = useParams<{ category: string }>()
+  const { language, t } = useI18n()
   const decodedCategory = decodeURIComponent(category || '')
 
   const posts = useMemo(
-    () => getPostsByCategory(decodedCategory),
-    [decodedCategory]
+    () => getPostsByCategory(decodedCategory, language),
+    [decodedCategory, language]
   )
 
   // Capitalize first letter for display
@@ -21,8 +23,8 @@ export default function CategoryPage() {
   return (
     <>
       <SEOHead
-        title={`${displayName} — Artigos`}
-        description={`Artigos sobre ${displayName}. Conteúdo técnico e prático.`}
+        title={`${displayName} — ${t('category.seo_title')}`}
+        description={t('category.seo_desc', { name: displayName })}
       />
 
       <section className="hero" style={{ paddingBottom: '1.5rem' }}>
@@ -34,8 +36,7 @@ export default function CategoryPage() {
           </nav>
           <h1 className="hero-title">{displayName}</h1>
           <p className="hero-subtitle">
-            {posts.length} {posts.length === 1 ? 'artigo' : 'artigos'} nesta
-            categoria
+            {posts.length} {posts.length === 1 ? t('category.articles_count_singular') : t('category.articles_count_plural')}
           </p>
         </div>
       </section>
@@ -50,10 +51,10 @@ export default function CategoryPage() {
           </div>
         ) : (
           <div className="empty-state" id="category-empty">
-            <h3>Nenhum artigo nesta categoria</h3>
-            <p>Volte em breve, novos artigos estão a caminho!</p>
+            <h3>{t('category.empty')}</h3>
+            <p>{t('category.empty_sub')}</p>
             <Link to="/" className="btn-primary" style={{ marginTop: '1rem' }}>
-              Voltar ao início
+              {t('post.back_home')}
             </Link>
           </div>
         )}

@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import { getAllCategories } from '../utils/posts'
+import { useI18n } from '../utils/i18n'
 
 export default function Header() {
   const location = useLocation()
-  const categories = getAllCategories()
+  const { language, setLanguage, t } = useI18n()
+  const categories = getAllCategories(language)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -62,12 +64,31 @@ export default function Header() {
               type="text"
               className="search-input"
               id="search-input"
-              placeholder="Buscar artigos..."
+              placeholder={t('search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Buscar artigos"
+              aria-label={t('search.placeholder')}
             />
           </form>
+        </div>
+
+        <div className="language-switcher">
+          <button
+            onClick={() => setLanguage('pt')}
+            className={`lang-btn ${language === 'pt' ? 'active' : ''}`}
+            type="button"
+            aria-label="Português"
+          >
+            PT
+          </button>
+          <button
+            onClick={() => setLanguage('en')}
+            className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+            type="button"
+            aria-label="English"
+          >
+            EN
+          </button>
         </div>
 
         <button

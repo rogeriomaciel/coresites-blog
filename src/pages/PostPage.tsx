@@ -7,13 +7,15 @@ import ShareButtons from '../components/ShareButtons'
 import PostCard from '../components/PostCard'
 import PromoBanner from '../components/PromoBanner'
 import { getPostBySlug, getRelatedPosts, formatDate, resolveAssetPath } from '../utils/posts'
+import { useI18n } from '../utils/i18n'
 
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>()
+  const { language, t } = useI18n()
 
   const post = useMemo(
-    () => (slug ? getPostBySlug(slug) : undefined),
-    [slug]
+    () => (slug ? getPostBySlug(slug, language) : undefined),
+    [slug, language]
   )
 
   const related = useMemo(
@@ -30,9 +32,9 @@ export default function PostPage() {
     return (
       <div className="not-found" id="post-not-found">
         <h1>404</h1>
-        <p>Artigo não encontrado.</p>
+        <p>{t('post.not_found')}</p>
         <Link to="/" className="btn-primary">
-          Voltar ao início
+          {t('post.back_home')}
         </Link>
       </div>
     )
@@ -110,7 +112,7 @@ export default function PostPage() {
                 <line x1="8" y1="2" x2="8" y2="6" />
                 <line x1="3" y1="10" x2="21" y2="10" />
               </svg>
-              <span>{formatDate(frontmatter.date)}</span>
+              <span>{formatDate(frontmatter.date, language)}</span>
             </div>
 
             {/* Reading Time */}
@@ -119,7 +121,7 @@ export default function PostPage() {
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
               </svg>
-              <span>{readingTime} min de leitura</span>
+              <span>{readingTime} {t('post.reading_time')}</span>
             </div>
 
             {/* Category */}
@@ -156,7 +158,7 @@ export default function PostPage() {
       {/* Related Articles */}
       {related.length > 0 && (
         <section className="related-section" id="related-articles">
-          <h3 className="section-heading">Artigos Relacionados</h3>
+          <h3 className="section-heading">{t('post.related')}</h3>
           <div className="posts-grid">
             {related.map((relPost) => (
               <PostCard key={relPost.frontmatter.slug} post={relPost} />

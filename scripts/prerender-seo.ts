@@ -160,16 +160,38 @@ async function prerenderSEO() {
   }
 
   const baseHtml = fs.readFileSync(distHtmlPath, 'utf-8')
-  const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'))
+  
+  const files: Array<{ filePath: string; slug: string; lang: string }> = []
+  const subdirs = ['pt', 'en']
+  for (const sub of subdirs) {
+    const dir = path.join(postsDir, sub)
+    if (!fs.existsSync(dir)) continue
+    const dirFiles = fs.readdirSync(dir).filter(f => f.endsWith('.md'))
+    for (const file of dirFiles) {
+      files.push({
+        filePath: path.join(dir, file),
+        slug: file.replace('.md', ''),
+        lang: sub
+      })
+    }
+  }
 
-  console.log(`[Prerender] Iniciando injeção de SEO estático para ${files.length} artigos...`)
+  // Agrupar posts pelo slug para evitar conflito de arquivos de saída (priorizando 'pt' como padrão)
+  const groupedFiles: Record<string, { filePath: string; slug: string; lang: string }> = {}
+  for (const file of files) {
+    if (!groupedFiles[file.slug] || file.lang === 'pt') {
+      groupedFiles[file.slug] = file
+    }
+  }
+
+  console.log(`[Prerender] Iniciando injeção de SEO estático para ${Object.keys(groupedFiles).length} artigos...`)
 
   // Coleta dados dos posts para renderizar a Home estaticamente
   const postsMetadata: Array<{ slug: string; title: string; excerpt: string; date: string; category: string }> = []
 
-  for (const file of files) {
-    const slug = file.replace('.md', '')
-    const content = fs.readFileSync(path.join(postsDir, file), 'utf-8')
+  for (const fileObj of Object.values(groupedFiles)) {
+    const slug = fileObj.slug
+    const content = fs.readFileSync(fileObj.filePath, 'utf-8')
     const parsed = parseFrontmatter(content)
 
     if (!parsed) continue
@@ -180,13 +202,15 @@ async function prerenderSEO() {
     const postDate = data.date || ''
     const postCategory = data.category || 'Geral'
     
-    postsMetadata.push({
-      slug,
-      title: data.title,
-      excerpt: data.excerpt || '',
-      date: postDate,
-      category: postCategory
-    })
+    if (fileObj.lang === 'pt') {
+      postsMetadata.push({
+        slug,
+        title: data.title,
+        excerpt: data.excerpt || '',
+        date: postDate,
+        category: postCategory
+      })
+    }
 
     // Tratando a extensão da imagem de capa (se for svg, o OG image vai usar png)
     let imageUrl = ''

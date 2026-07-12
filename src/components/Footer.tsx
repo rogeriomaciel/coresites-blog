@@ -1,4 +1,7 @@
+import { useI18n } from '../utils/i18n'
+
 export default function Footer() {
+  const { t } = useI18n()
   const year = new Date().getFullYear()
 
   return (
@@ -10,7 +13,7 @@ export default function Footer() {
             alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
             className="footer-logo-image"
           />
-          <span>&copy; {year} {import.meta.env.VITE_COPYRIGHT_TEXT || 'Todos os direitos reservados.'}</span>
+          <span>&copy; {year} {import.meta.env.VITE_COPYRIGHT_TEXT || t('footer.rights')}</span>
         </div>
         <div className="footer-links">
           {import.meta.env.VITE_SOCIAL_GITHUB && (

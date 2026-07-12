@@ -25,6 +25,7 @@ export interface PostFrontmatter {
   tags: string[]
   cover_image: string
   published: boolean
+  lang?: 'pt' | 'en'
 }
 
 export interface Post {
@@ -48,8 +49,8 @@ function calculateReadingTime(text: string): number {
  */
 const postFilesRaw = import.meta.glob(
   [
-    '../../content/posts/*.md',
-    '../../../content/posts/*.md'
+    '../../content/posts/**/*.md',
+    '../../../content/posts/**/*.md'
   ],
   {
     query: '?raw',
@@ -60,17 +61,17 @@ const postFilesRaw = import.meta.glob(
 
 // Se houver posts do cliente (../../../), ignoramos totalmente os posts internos do Core (../../)
 const allPaths = Object.keys(postFilesRaw)
-const hasClientPosts = allPaths.some(path => path.startsWith('../../../content/posts'))
+const hasClientPosts = allPaths.some(path => path.startsWith('../../../content/posts/'))
 
 const postFiles = hasClientPosts
-  ? Object.fromEntries(Object.entries(postFilesRaw).filter(([path]) => path.startsWith('../../../content/posts')))
+  ? Object.fromEntries(Object.entries(postFilesRaw).filter(([path]) => path.startsWith('../../../content/posts/')))
   : postFilesRaw
 
 /**
  * Parse a raw markdown string into a Post object.
  * We use a custom parser instead of gray-matter to avoid Vite browser-compatibility issues (Buffer/js-yaml).
  */
-function parsePost(raw: string): Post {
+function parsePost(raw: string, filePath: string): Post {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
   
   let data: Record<string, any> = {}
@@ -135,6 +136,9 @@ function parsePost(raw: string): Post {
   }
 
   const frontmatter = data as PostFrontmatter
+  // Detect language from directory path
+  const isEn = filePath.toLowerCase().includes('/en/')
+  frontmatter.lang = isEn ? 'en' : 'pt'
 
   return {
     frontmatter,
@@ -146,13 +150,15 @@ function parsePost(raw: string): Post {
 /**
  * Get all published posts, sorted by date (newest first).
  */
-export function getAllPosts(): Post[] {
+export function getAllPosts(lang?: 'pt' | 'en'): Post[] {
   const posts: Post[] = []
 
-  for (const raw of Object.values(postFiles)) {
-    const post = parsePost(raw)
+  for (const [path, raw] of Object.entries(postFiles)) {
+    const post = parsePost(raw, path)
     if (post.frontmatter.published !== false) {
-      posts.push(post)
+      if (!lang || post.frontmatter.lang === lang) {
+        posts.push(post)
+      }
     }
   }
 
@@ -168,16 +174,22 @@ export function getAllPosts(): Post[] {
 /**
  * Get a single post by slug.
  */
-export function getPostBySlug(slug: string): Post | undefined {
+export function getPostBySlug(slug: string, lang?: 'pt' | 'en'): Post | undefined {
   const allPosts = getAllPosts()
+  
+  if (lang) {
+    const matched = allPosts.find((p) => p.frontmatter.slug === slug && p.frontmatter.lang === lang)
+    if (matched) return matched
+  }
+  
   return allPosts.find((p) => p.frontmatter.slug === slug)
 }
 
 /**
  * Get all unique categories.
  */
-export function getAllCategories(): string[] {
-  const posts = getAllPosts()
+export function getAllCategories(lang?: 'pt' | 'en'): string[] {
+  const posts = getAllPosts(lang)
   const categories = new Set<string>()
   for (const post of posts) {
     if (post.frontmatter.category) {
@@ -190,8 +202,8 @@ export function getAllCategories(): string[] {
 /**
  * Get all unique tags.
  */
-export function getAllTags(): string[] {
-  const posts = getAllPosts()
+export function getAllTags(lang?: 'pt' | 'en'): string[] {
+  const posts = getAllPosts(lang)
   const tags = new Set<string>()
   for (const post of posts) {
     for (const tag of post.frontmatter.tags ?? []) {
@@ -204,8 +216,8 @@ export function getAllTags(): string[] {
 /**
  * Get posts by category.
  */
-export function getPostsByCategory(category: string): Post[] {
-  return getAllPosts().filter(
+export function getPostsByCategory(category: string, lang?: 'pt' | 'en'): Post[] {
+  return getAllPosts(lang).filter(
     (p) => p.frontmatter.category.toLowerCase() === category.toLowerCase()
   )
 }
@@ -213,11 +225,11 @@ export function getPostsByCategory(category: string): Post[] {
 /**
  * Search posts by title, excerpt, tags, and category.
  */
-export function searchPosts(query: string): Post[] {
+export function searchPosts(query: string, lang?: 'pt' | 'en'): Post[] {
   const q = query.toLowerCase().trim()
-  if (!q) return getAllPosts()
+  if (!q) return getAllPosts(lang)
 
-  return getAllPosts().filter((post) => {
+  return getAllPosts(lang).filter((post) => {
     const { title, excerpt, tags, category, keywords } = post.frontmatter
     const searchable = [
       title,
@@ -239,7 +251,8 @@ export function getRelatedPosts(currentSlug: string, limit = 3): Post[] {
   const current = getPostBySlug(currentSlug)
   if (!current) return []
 
-  const allPosts = getAllPosts().filter(
+  const currentLang = current.frontmatter.lang || 'pt'
+  const allPosts = getAllPosts(currentLang).filter(
     (p) => p.frontmatter.slug !== currentSlug
   )
   const currentTags = new Set(current.frontmatter.tags ?? [])
@@ -259,11 +272,12 @@ export function getRelatedPosts(currentSlug: string, limit = 3): Post[] {
 }
 
 /**
- * Format a date string to pt-BR locale.
+ * Format a date string to localized format.
  */
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string, lang: 'pt' | 'en' = 'pt'): string {
   const date = new Date(dateStr)
-  return date.toLocaleDateString('pt-BR', {
+  const locale = lang === 'pt' ? 'pt-BR' : 'en-US'
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
