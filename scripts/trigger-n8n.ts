@@ -69,7 +69,7 @@ async function processPost(slug: string, postPath: string) {
     excerpt: data.excerpt || '',
     category: data.category || '',
     cover_image: data.cover_image || '',
-    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/\.svg$/, network === 'instagram' ? '-sq.png' : '.png')}?v=${Date.now()}` : '',
+    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/(\.svg|-base\.png)$/, network === 'instagram' ? '-sq.png' : '.png')}?v=${Date.now()}` : '',
     content: parsed.content.substring(0, 1500) + '...'
   }
 
@@ -94,7 +94,7 @@ async function processPost(slug: string, postPath: string) {
       publishedNetworks.push(network)
       parsed.data.social_published = publishedNetworks
       
-      const updatedMarkdown = matter.stringify(parsed.content, parsed.data)
+      const updatedMarkdown = matter.stringify(parsed.content, parsed.data, { lineWidth: -1 } as any)
       fs.writeFileSync(postPath, updatedMarkdown, 'utf-8')
       console.log(`📝 Arquivo Markdown atualizado: '${network}' adicionado em social_published.`)
     }
@@ -116,12 +116,17 @@ async function run() {
   }
 
   if (slugOrAll === 'all') {
-    const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'))
-    console.log(`🔍 Iniciando varredura em ${files.length} posts para a rede: ${network}...`)
+    const ptDir = path.join(postsDir, 'pt')
+    if (!fs.existsSync(ptDir)) {
+      console.log('Pasta pt/ não encontrada, nada a publicar.')
+      return
+    }
+    const files = fs.readdirSync(ptDir).filter(f => f.endsWith('.md'))
+    console.log(`🔍 Iniciando varredura em ${files.length} posts na pasta 'pt' para a rede: ${network}...`)
     
     for (const file of files) {
-      const slug = file.replace(/\.md$/, '')
-      const postPath = path.join(postsDir, file)
+      const slug = path.join('pt', file.replace(/\.md$/, ''))
+      const postPath = path.join(ptDir, file)
       await processPost(slug, postPath)
     }
     console.log(`\n🎉 Varredura de publicação finalizada!`)

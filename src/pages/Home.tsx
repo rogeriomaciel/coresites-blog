@@ -2,28 +2,24 @@ import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import SEOHead from '../components/SEOHead'
 import PostCard from '../components/PostCard'
-import { getAllPosts, getAllCategories, searchPosts, resolveAssetPath } from '../utils/posts'
+import PromoBanner from '../components/PromoBanner'
+import { getAllPosts, searchPosts, resolveAssetPath } from '../utils/posts'
+import { useI18n } from '../utils/i18n'
 
 export default function Home() {
   const [searchParams] = useSearchParams()
+  const { language, t } = useI18n()
   const query = searchParams.get('q') || ''
 
   const posts = useMemo(
-    () => (query ? searchPosts(query) : getAllPosts()),
-    [query]
+    () => (query ? searchPosts(query, language) : getAllPosts(language)),
+    [query, language]
   )
-
-  const categories = useMemo(() => getAllCategories(), [])
 
   const featuredPost = !query ? posts[0] : undefined
   const gridPosts = !query ? posts.slice(1) : posts
 
-  const siteName = import.meta.env.VITE_SITE_NAME || 'CoreSites Blog'
   const siteDescription = import.meta.env.VITE_SITE_DESCRIPTION || 'Artigos sobre tecnologia, IA, automação e desenvolvimento. Conteúdo prático para resolver problemas reais.'
-  
-  const nameParts = siteName.split(' ')
-  const firstWord = nameParts[0]
-  const restOfName = nameParts.slice(1).join(' ')
 
   return (
     <>
@@ -32,7 +28,11 @@ export default function Home() {
       <section className="hero">
         <div className="container">
           <h1 className="hero-title">
-            <span className="gradient-text">{firstWord}</span> {restOfName}
+            <img
+              src="/logo-coreauto-horizontal.png"
+              alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+              className="hero-logo-image"
+            />
           </h1>
           <p className="hero-subtitle">
             {siteDescription}
@@ -41,31 +41,12 @@ export default function Home() {
       </section>
 
       <div className="container">
-        {/* Category filters */}
-        <div className="category-filters" id="category-filters">
-          <Link
-            to="/"
-            className={`category-pill ${!query ? 'active' : ''}`}
-          >
-            Todos
-          </Link>
-          {categories.map((cat) => (
-            <Link
-              key={cat}
-              to={`/categoria/${encodeURIComponent(cat.toLowerCase())}`}
-              className="category-pill"
-            >
-              {cat}
-            </Link>
-          ))}
-        </div>
-
         {/* Search result indicator */}
         {query && (
           <div className="section-heading" id="search-results-heading">
-            Resultados para &ldquo;{query}&rdquo;
+            {t('search.results')} &ldquo;{query}&rdquo;
             <Link to="/" style={{ marginLeft: 'auto', fontSize: '0.85rem' }}>
-              Limpar busca
+              {t('search.clear')}
             </Link>
           </div>
         )}
@@ -90,7 +71,7 @@ export default function Home() {
                   {featuredPost.frontmatter.category}
                 </span>
                 <span className="tag">
-                  {featuredPost.readingTime} min de leitura
+                  {featuredPost.readingTime} {t('post.reading_time')}
                 </span>
               </div>
               <h2>{featuredPost.frontmatter.title}</h2>
@@ -104,22 +85,23 @@ export default function Home() {
           <>
             {!query && (
               <h2 className="section-heading" id="latest-posts-heading">
-                Artigos Recentes
+                {t('post.recent')}
               </h2>
             )}
             <div className="posts-grid" id="posts-grid">
               {gridPosts.map((post) => (
                 <PostCard key={post.frontmatter.slug} post={post} />
               ))}
+              <PromoBanner />
             </div>
           </>
         ) : (
           <div className="empty-state" id="empty-state">
-            <h3>Nenhum artigo encontrado</h3>
+            <h3>{t('search.empty')}</h3>
             <p>
               {query
-                ? 'Tente buscar com outros termos.'
-                : 'Os artigos aparecerão aqui quando forem publicados.'}
+                ? t('search.empty_sub')
+                : t('search.empty_none')}
             </p>
           </div>
         )}

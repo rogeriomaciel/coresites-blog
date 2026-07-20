@@ -1,32 +1,30 @@
-# React + TypeScript + Vite
+# CoreSites — Módulo Core (Headless AIO)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Este é o submódulo `core` do ecossistema CoreSites/CoreAutoCRM. Ele foi projetado para atuar como o **motor central** (ReadOnly) de todos os projetos de front-end (Blogs, Portfólios, Landing Pages), fornecendo os scripts de automação, pipelines de CI/CD, injeção de SEO e as **Agentic Skills** que dão superpoderes de Inteligência Artificial ao fluxo de trabalho.
 
-Currently, two official plugins are available:
+> **⚠️ AVISO IMPORTANTE**
+> A pasta `core` é estritamente **READ-ONLY** nos projetos clientes. Todas as postagens, imagens e configurações locais de clientes devem ser feitas na raiz do projeto pai, NUNCA dentro desta pasta.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 📚 Documentação Detalhada
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Para facilitar a manutenção e o entendimento da arquitetura robusta deste core, a documentação foi dividida por áreas de especialidade. 
 
-## Expanding the Oxlint configuration
+Consulte os arquivos abaixo na pasta `docs/` para se aprofundar em cada pilar do sistema:
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+### 1. 🏗️ Arquitetura e Frontend
+[📄 Leia: docs/architecture.md](file:///rogerio/core/coreautocrm-blog/core/docs/architecture.md)
+Entenda o modelo Headless, a stack (Vite + React + TS), os processos de geração de imagens OpenGraph (OG) estáticas e como a injeção profunda de SEO (Prerender) é feita na compilação.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+### 2. 🤖 IA e Agentic Skills
+[📄 Leia: docs/agentic-skills.md](file:///rogerio/core/coreautocrm-blog/core/docs/agentic-skills.md)
+Veja como as habilidades dos agentes autônomos operam. Detalhes sobre as skills de análise de tráfego com GA4, geração de artigos otimizados para GEO e publicação automatizada.
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+### 3. 🚀 Deploy e CI/CD Local
+[📄 Leia: docs/ci-cd-publish.md](file:///rogerio/core/coreautocrm-blog/core/docs/ci-cd-publish.md)
+Guia definitivo sobre o script de publicação (`deploy-local.sh`). Entenda como o Git versiona as filiais automaticamente, como o build é isolado e como o `rsync` envia apenas a pasta `dist/` para a VPS. (Inclui as variáveis `.env` necessárias).
+
+### 4. 📱 Automação de Redes Sociais
+[📄 Leia: docs/social-automation.md](file:///rogerio/core/coreautocrm-blog/core/docs/social-automation.md)
+Descubra a engenharia por trás do script `trigger-n8n.ts`. Aprenda como o core impede publicações duplicadas, faz tracking em markdown e dispara webhooks em batch para LinkedIn, Facebook e Instagram.

@@ -5,14 +5,16 @@ import Home from './pages/Home'
 import PostPage from './pages/PostPage'
 import CategoryPage from './pages/CategoryPage'
 import { Link } from 'react-router-dom'
+import { LanguageProvider, useI18n } from './utils/i18n'
 
 function NotFound() {
+  const { t } = useI18n()
   return (
     <div className="not-found">
-      <h1>404</h1>
-      <p>Página não encontrada.</p>
+      <h1>{t('404.title')}</h1>
+      <p>{t('404.message')}</p>
       <Link to="/" className="btn-primary">
-        Voltar ao início
+        {t('404.button')}
       </Link>
     </div>
   )
@@ -28,16 +30,18 @@ export default function App() {
 
   return (
     <HelmetProvider>
-      <BrowserRouter basename={basePath}>
-        <Routes>
-          <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/post/:slug" element={<PostPage />} />
-            <Route path="/categoria/:category" element={<CategoryPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter basename={basePath}>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/post/:slug" element={<PostPage />} />
+              <Route path="/categoria/:category" element={<CategoryPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </LanguageProvider>
     </HelmetProvider>
   )
 }

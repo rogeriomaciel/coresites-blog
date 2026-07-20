@@ -22,6 +22,7 @@ interface PostMeta {
   date: string
   published: boolean
   title: string
+  lang: string
 }
 
 function getPostsMeta(): PostMeta[] {
@@ -29,19 +30,26 @@ function getPostsMeta(): PostMeta[] {
     return []
   }
 
-  const files = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.md'))
   const posts: PostMeta[] = []
+  const subdirs = ['pt', 'en']
 
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(CONTENT_DIR, file), 'utf-8')
-    const { data } = matter(raw)
-    if (data.published !== false) {
-      posts.push({
-        slug: data.slug || path.basename(file, '.md'),
-        date: data.date || new Date().toISOString(),
-        published: data.published !== false,
-        title: data.title || path.basename(file, '.md'),
-      })
+  for (const sub of subdirs) {
+    const dirPath = path.join(CONTENT_DIR, sub)
+    if (!fs.existsSync(dirPath)) continue
+
+    const files = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md'))
+    for (const file of files) {
+      const raw = fs.readFileSync(path.join(dirPath, file), 'utf-8')
+      const { data } = matter(raw)
+      if (data.published !== false) {
+        posts.push({
+          slug: data.slug || path.basename(file, '.md'),
+          date: data.date || new Date().toISOString(),
+          published: data.published !== false,
+          title: data.title || path.basename(file, '.md'),
+          lang: sub,
+        })
+      }
     }
   }
 
@@ -61,7 +69,7 @@ function generateSitemap(): void {
     // Individual posts
     ...posts.map(
       (post) => `  <url>
-    <loc>${SITE_URL}/post/${post.slug}</loc>
+    <loc>${SITE_URL}/post/${post.slug}${post.lang === 'en' ? '?lang=en' : ''}</loc>
     <lastmod>${new Date(post.date).toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -94,21 +102,27 @@ ${urls.join('\n')}
   let llmsContent = `# ${SITE_NAME}\n\n${SITE_DESC}\n\n${systemPrompt}## Artigos\n\n`
   let llmsFullContent = `# ${SITE_NAME} - Knowledge Base Completa\n\n${SITE_DESC}\n\n${systemPrompt}## Artigos Completos\n\n`
   
-  const allFiles = fs.readdirSync(CONTENT_DIR).filter((f) => f.endsWith('.md'))
-  for (const file of allFiles) {
-    const raw = fs.readFileSync(path.join(CONTENT_DIR, file), 'utf-8')
-    const { data, content } = matter(raw)
-    if (data.published !== false) {
-      const postSlug = data.slug || path.basename(file, '.md')
-      const postUrl = `${SITE_URL}/post/${postSlug}`
-      const title = data.title || postSlug
-      const excerpt = data.excerpt || data.meta_description || ''
-      
-      // Add to llms.txt (summary)
-      llmsContent += `- [${title}](${postUrl}): ${excerpt}\n`
-      
-      // Add to llms-full.txt (full content)
-      llmsFullContent += `### [${title}](${postUrl})\n\n${content}\n\n---\n\n`
+  const subdirs = ['pt', 'en']
+  for (const sub of subdirs) {
+    const dirPath = path.join(CONTENT_DIR, sub)
+    if (!fs.existsSync(dirPath)) continue
+
+    const allFiles = fs.readdirSync(dirPath).filter((f) => f.endsWith('.md'))
+    for (const file of allFiles) {
+      const raw = fs.readFileSync(path.join(dirPath, file), 'utf-8')
+      const { data, content } = matter(raw)
+      if (data.published !== false) {
+        const postSlug = data.slug || path.basename(file, '.md')
+        const postUrl = `${SITE_URL}/post/${postSlug}${sub === 'en' ? '?lang=en' : ''}`
+        const title = data.title || postSlug
+        const excerpt = data.excerpt || data.meta_description || ''
+        
+        // Add to llms.txt (summary)
+        llmsContent += `- [${title}](${postUrl}): ${excerpt}\n`
+        
+        // Add to llms-full.txt (full content)
+        llmsFullContent += `### [${title}](${postUrl})\n\n${content}\n\n---\n\n`
+      }
     }
   }
 

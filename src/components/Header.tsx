@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useState, useCallback } from 'react'
 import { getAllCategories } from '../utils/posts'
+import { useI18n } from '../utils/i18n'
 
 export default function Header() {
   const location = useLocation()
-  const categories = getAllCategories()
+  const { language, setLanguage, t } = useI18n()
+  const categories = getAllCategories(language)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -22,12 +24,11 @@ export default function Header() {
     <header className="header" id="main-header">
       <div className="header-inner">
         <Link to="/" className="header-logo" id="header-logo">
-          {import.meta.env.VITE_LOGO_URL ? (
-            <img src={import.meta.env.VITE_LOGO_URL} alt={import.meta.env.VITE_SITE_NAME || 'Blog'} style={{ height: '28px', borderRadius: '4px' }} />
-          ) : (
-            <span className="header-logo-icon">{import.meta.env.VITE_LOGO_TEXT || 'C'}</span>
-          )}
-          <span>{import.meta.env.VITE_SITE_NAME || 'CoreSites Blog'}</span>
+          <img
+            src="/logo-coreauto-horizontal.png"
+            alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto Blog'}
+            className="header-logo-image"
+          />
         </Link>
 
         <nav className="header-nav" id="main-nav">
@@ -63,12 +64,31 @@ export default function Header() {
               type="text"
               className="search-input"
               id="search-input"
-              placeholder="Buscar artigos..."
+              placeholder={t('search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Buscar artigos"
+              aria-label={t('search.placeholder')}
             />
           </form>
+        </div>
+
+        <div className="language-switcher">
+          <button
+            onClick={() => setLanguage('pt')}
+            className={`lang-btn ${language === 'pt' ? 'active' : ''}`}
+            type="button"
+            aria-label="Português"
+          >
+            PT
+          </button>
+          <button
+            onClick={() => setLanguage('en')}
+            className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+            type="button"
+            aria-label="English"
+          >
+            EN
+          </button>
         </div>
 
         <button

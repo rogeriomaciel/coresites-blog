@@ -32,6 +32,8 @@ Cada artigo deve ser um arquivo `.md` com o nome igual ao slug.
 
 ### Estrutura Obrigatória do Frontmatter
 
+**REQUISITO DE SEO CRÍTICO**: Sempre defina os campos `title`, `excerpt`, `meta_title` e `meta_description` como strings de linha única envoltas por aspas simples (`'`). NUNCA utilize ou permita a formatação com indicadores de bloco dobrado (`>-` ou block scalars), pois as quebras de linha introduzidas por esses blocos quebram a renderização correta de tags de metadados HTML de SEO.
+
 ```yaml
 ---
 title: "Título do artigo focado em conversão"
@@ -62,11 +64,10 @@ O conteúdo DEVE seguir estas regras para maximizar citações por IAs:
 
 ## Cover Image
 
-Após criar o artigo, crie também um arquivo SVG em `public/images/posts/` com o mesmo nome do slug. O SVG deve:
-- Ter viewBox="0 0 1200 630" (proporção Open Graph)
-- Usar fundo escuro (#0a0a12) com grafismos abstratos e elementos visuais de tecnologia (linhas, conexões, etc)
-- **NÃO incluir o título ou textos na imagem** (a interface do blog desenha o título via HTML por cima do SVG; a imagem deve atuar apenas como um background decorativo)
-- Usar a paleta de cores do blog (azul/ciano #0ea5e9, #06b6d4)
+Após criar o artigo, use a ferramenta `generate_image` nativa do Antigravity para gerar uma imagem hiper-realista, altamente detalhada, com iluminação profissional, sobre o tema do post. Salve a imagem resultante como PNG no diretório `public/images/posts/` com o sufixo `-base.png` (ex: `slug-do-artigo-base.png`).
+
+- NÃO inclua pedidos de texto na imagem (o título será renderizado em HTML/OG automaticamente).
+- Mantenha a temática alinhada com as cores e assuntos da CoreAutoCRM (ex: oficinas mecânicas modernas, tecnologia, painéis digitais, etc).
 
 ## Passos para o Agente
 
@@ -74,7 +75,7 @@ Após criar o artigo, crie também um arquivo SVG em `public/images/posts/` com 
 2. **Gerar o slug** a partir do título (kebab-case, sem acentos)
 3. **Gerar o frontmatter** completo com SEO
 4. **Escrever o conteúdo** em Markdown seguindo as regras GEO
-5. **Criar a cover image** SVG em `public/images/posts/`
+5. **Criar a cover image** (base.png via `generate_image`) em `public/images/posts/`
 6. **Salvar o arquivo** verificando se está rodando no cliente (`../content/posts/{slug}.md`) ou no core (`content/posts/{slug}.md`)
 7. **Informar o usuário** que o artigo foi criado e perguntar se quer revisá-lo
 

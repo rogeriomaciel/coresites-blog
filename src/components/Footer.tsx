@@ -1,12 +1,20 @@
+import { useI18n } from '../utils/i18n'
+
 export default function Footer() {
+  const { t } = useI18n()
   const year = new Date().getFullYear()
 
   return (
     <footer className="footer" id="main-footer">
       <div className="footer-inner">
-        <p className="footer-text">
-          &copy; {year} {import.meta.env.VITE_SITE_NAME || 'CoreSites'}. {import.meta.env.VITE_COPYRIGHT_TEXT || 'Todos os direitos reservados.'}
-        </p>
+        <div className="footer-text">
+          <img
+            src="/logo-coreauto-horizontal.png"
+            alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+            className="footer-logo-image"
+          />
+          <span>&copy; {year} {import.meta.env.VITE_COPYRIGHT_TEXT || t('footer.rights')}</span>
+        </div>
         <div className="footer-links">
           {import.meta.env.VITE_SOCIAL_GITHUB && (
             <a

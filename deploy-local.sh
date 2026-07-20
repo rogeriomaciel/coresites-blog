@@ -46,6 +46,7 @@ fi
 
 echo ""
 echo "📦 3. Compilando o projeto localmente..."
+cd core
 bun run build
 
 if [ ! -d "dist" ]; then
@@ -68,14 +69,19 @@ else
     dist/ "${DEPLOY_USER}@${DEPLOY_VPS_IP}:${DEPLOY_PATH}/"
 fi
 
-echo ""
-echo "📱 5. Disparando publicações para redes sociais (Batch Mode)..."
-echo "-> Enviando fila para o LinkedIn..."
-bun run scripts/trigger-n8n.ts all --batch --network linkedin
-echo "-> Enviando fila para o Facebook..."
-bun run scripts/trigger-n8n.ts all --batch --network facebook
-echo "-> Enviando fila para o Instagram..."
-bun run scripts/trigger-n8n.ts all --batch --network instagram
+if [ "${SKIP_SOCIAL:-0}" != "1" ]; then
+  echo ""
+  echo "📱 5. Disparando publicações para redes sociais (Batch Mode)..."
+  echo "-> Enviando fila para o LinkedIn..."
+  bun run scripts/trigger-n8n.ts all --batch --network linkedin
+  echo "-> Enviando fila para o Facebook..."
+  bun run scripts/trigger-n8n.ts all --batch --network facebook
+  echo "-> Enviando fila para o Instagram..."
+  bun run scripts/trigger-n8n.ts all --batch --network instagram
+else
+  echo ""
+  echo "📱 5. Pulando publicações para redes sociais (SKIP_SOCIAL=1)..."
+fi
 
 echo ""
 echo "========================================"

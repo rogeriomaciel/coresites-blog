@@ -27,6 +27,7 @@ Quando acionado, o script de deploy fará exatamente as seguintes etapas:
 1. **Branch e MR**: Cria uma nova branch com as alterações, faz commit/push e abre um Merge Request (MR/PR) no repositório remoto.
 2. **Build Local**: Roda `bun run build` na máquina para gerar os estáticos.
 3. **Upload (Deploy)**: Pega **apenas** a pasta resultante do build (`dist/`) e envia via SSH/Rsync para o servidor. O código fonte *não* vai para o servidor.
+4. **Redes Sociais**: No final do processo, o script dispara automaticamente o webhook do **n8n**, publicando os novos artigos em português no **LinkedIn, Facebook e Instagram**.
 
 ## Pré-requisitos
 
