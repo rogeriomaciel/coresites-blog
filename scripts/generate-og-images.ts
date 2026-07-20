@@ -24,10 +24,22 @@ function wrapText(text: string, maxChars: number) {
 
 function findPostFrontmatter(svgFilename: string) {
   const slug = svgFilename.replace(/\.svg$/, '')
-  const rootPostPath = path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`)
-  const corePostPath = path.join(process.cwd(), 'content', 'posts', `${slug}.md`)
-  
-  const postPath = fs.existsSync(rootPostPath) ? rootPostPath : (fs.existsSync(corePostPath) ? corePostPath : '')
+  const searchPaths = [
+    path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`),
+    path.join(process.cwd(), 'content', 'posts', `${slug}.md`),
+    path.join(process.cwd(), '..', 'content', 'posts', 'pt', `${slug}.md`),
+    path.join(process.cwd(), 'content', 'posts', 'pt', `${slug}.md`),
+    path.join(process.cwd(), '..', 'content', 'posts', 'en', `${slug}.md`),
+    path.join(process.cwd(), 'content', 'posts', 'en', `${slug}.md`),
+  ]
+
+  let postPath = ''
+  for (const p of searchPaths) {
+    if (fs.existsSync(p)) {
+      postPath = p
+      break
+    }
+  }
   
   if (!postPath) return null
 

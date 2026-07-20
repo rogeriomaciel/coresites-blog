@@ -116,12 +116,17 @@ async function run() {
   }
 
   if (slugOrAll === 'all') {
-    const files = fs.readdirSync(postsDir).filter(f => f.endsWith('.md'))
-    console.log(`🔍 Iniciando varredura em ${files.length} posts para a rede: ${network}...`)
+    const ptDir = path.join(postsDir, 'pt')
+    if (!fs.existsSync(ptDir)) {
+      console.log('Pasta pt/ não encontrada, nada a publicar.')
+      return
+    }
+    const files = fs.readdirSync(ptDir).filter(f => f.endsWith('.md'))
+    console.log(`🔍 Iniciando varredura em ${files.length} posts na pasta 'pt' para a rede: ${network}...`)
     
     for (const file of files) {
-      const slug = file.replace(/\.md$/, '')
-      const postPath = path.join(postsDir, file)
+      const slug = path.join('pt', file.replace(/\.md$/, ''))
+      const postPath = path.join(ptDir, file)
       await processPost(slug, postPath)
     }
     console.log(`\n🎉 Varredura de publicação finalizada!`)
