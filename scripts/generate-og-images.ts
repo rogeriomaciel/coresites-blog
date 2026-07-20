@@ -23,7 +23,7 @@ function wrapText(text: string, maxChars: number) {
 }
 
 function findPostFrontmatter(svgFilename: string) {
-  const slug = svgFilename.replace(/\.svg$/, '')
+  const slug = svgFilename.replace(/(\.svg|-base\.png)$/, '')
   const searchPaths = [
     path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`),
     path.join(process.cwd(), 'content', 'posts', `${slug}.md`),
@@ -123,17 +123,17 @@ async function generatePngFromSvg() {
     if (!fs.existsSync(dir)) continue
 
     const files = fs.readdirSync(dir)
-    const svgFiles = files.filter(f => f.endsWith('.svg'))
+    const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png')))
 
-    if (svgFiles.length > 0) {
-      console.log(`[OG Images] Encontrados ${svgFiles.length} arquivos .svg em ${dir}. Iniciando conversão dupla (Wide e Square)...`)
+    if (baseFiles.length > 0) {
+      console.log(`[OG Images] Encontrados ${baseFiles.length} arquivos base em ${dir}. Iniciando conversão dupla (Wide e Square)...`)
 
-      for (const file of svgFiles) {
+      for (const file of baseFiles) {
         const svgPath = path.join(dir, file)
         
         // Caminhos de saída
-        const pngWidePath = path.join(dir, file.replace(/\.svg$/, '.png'))
-        const pngSquarePath = path.join(dir, file.replace(/\.svg$/, '-sq.png'))
+        const pngWidePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '.png'))
+        const pngSquarePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '-sq.png'))
 
         const frontmatter = findPostFrontmatter(file)
         

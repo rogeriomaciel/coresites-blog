@@ -17,7 +17,7 @@ export function generateArticleJsonLd(
     headline: post.title,
     description: post.meta_description || post.excerpt,
     image: post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/\.svg$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
       : undefined,
     datePublished: new Date(post.date).toISOString(),
     dateModified: new Date(post.date).toISOString(),
@@ -90,7 +90,7 @@ export function buildOgTags(post: PostFrontmatter) {
     'og:type': 'article',
     'og:url': `${SITE_URL}/post/${post.slug}`,
     'og:image': post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/\.svg$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
       : undefined,
     'og:site_name': SITE_NAME,
     'og:locale': 'pt_BR',
@@ -110,7 +110,7 @@ export function buildTwitterTags(post: PostFrontmatter) {
     'twitter:title': post.meta_title || post.title,
     'twitter:description': post.meta_description || post.excerpt,
     'twitter:image': post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/\.svg$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
       : undefined,
   }
 }

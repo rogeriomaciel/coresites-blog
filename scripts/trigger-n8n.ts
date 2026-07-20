@@ -69,7 +69,7 @@ async function processPost(slug: string, postPath: string) {
     excerpt: data.excerpt || '',
     category: data.category || '',
     cover_image: data.cover_image || '',
-    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/\.svg$/, network === 'instagram' ? '-sq.png' : '.png')}?v=${Date.now()}` : '',
+    cover_image_url: data.cover_image ? `${SITE_URL}${data.cover_image.replace(/(\.svg|-base\.png)$/, network === 'instagram' ? '-sq.png' : '.png')}?v=${Date.now()}` : '',
     content: parsed.content.substring(0, 1500) + '...'
   }
 
