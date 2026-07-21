@@ -61,8 +61,8 @@ export default function SEOHead({
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href={
         post
-          ? `${import.meta.env.VITE_SITE_URL || ''}/post/${post.slug}`
-          : import.meta.env.VITE_SITE_URL || ''
+          ? `${import.meta.env.VITE_SITE_URL || 'https://blog.coreautocrm.com.br'}/post/${post.slug}/`
+          : `${import.meta.env.VITE_SITE_URL || 'https://blog.coreautocrm.com.br'}/`
       } />
 
       {/* Open Graph */}
@@ -78,6 +78,12 @@ export default function SEOHead({
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content={siteName} />
           <meta property="og:locale" content="pt_BR" />
+          <meta property="og:image" content={`${import.meta.env.VITE_SITE_URL || 'https://blog.coreautocrm.com.br'}/test-og.png`} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={pageTitle} />
+          <meta name="twitter:description" content={pageDescription} />
+          <meta name="twitter:image" content={`${import.meta.env.VITE_SITE_URL || 'https://blog.coreautocrm.com.br'}/test-og.png`} />
+          <meta name="keywords" content="oficina mecanica, crm oficina mecanica, ia para oficina, automacao whatsapp oficina, gestao de oficina" />
         </>
       )}
 

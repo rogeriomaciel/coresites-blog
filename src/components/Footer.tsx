@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="footer-text">
           <img
             src="/logo-coreauto-horizontal.png"
-            alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+            alt="CoreAutoCRM - Sistema de Gestão para Oficinas Mecânicas"
             className="footer-logo-image"
           />
           <span>&copy; {year} {import.meta.env.VITE_COPYRIGHT_TEXT || t('footer.rights')}</span>

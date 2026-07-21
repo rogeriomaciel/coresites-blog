@@ -197,7 +197,8 @@ async function prerenderSEO() {
     if (!parsed) continue
     const { data, body } = parsed
 
-    const pageTitle = data.meta_title || data.title
+    const rawTitle = data.meta_title || data.title || slug
+    const pageTitle = rawTitle.length > 50 ? rawTitle : `${rawTitle} | ${SITE_NAME}`
     const pageDescription = data.meta_description || data.excerpt
     const postDate = data.date || ''
     const postCategory = data.category || 'Geral'
@@ -236,13 +237,15 @@ async function prerenderSEO() {
     `
 
     // Criar as tags estáticas para injetar no head
+    const canonicalUrl = `${SITE_URL}/post/${slug}/`
     const seoTags = `
-    <title>${pageTitle} | ${SITE_NAME}</title>
+    <title>${pageTitle}</title>
     <meta name="description" content="${pageDescription}" />
+    <link rel="canonical" href="${canonicalUrl}" />
     <meta property="og:title" content="${pageTitle}" />
     <meta property="og:description" content="${pageDescription}" />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content="${SITE_URL}/post/${slug}" />
+    <meta property="og:url" content="${canonicalUrl}" />
     <meta property="og:site_name" content="${SITE_NAME}" />
     ${imageUrl ? `<meta property="og:image" content="${imageUrl}" />` : ''}
     <meta name="twitter:card" content="summary_large_image" />
@@ -292,12 +295,20 @@ async function prerenderSEO() {
   `
 
   const homeSeoTags = `
-  <title>${SITE_NAME} | Blog Oficial</title>
+  <title>${SITE_NAME} | Blog Oficial de IA e Gestão para Oficinas Mecânicas</title>
   <meta name="description" content="${SITE_DESCRIPTION}" />
-  <meta property="og:title" content="${SITE_NAME} | Blog" />
+  <meta name="keywords" content="oficina mecanica, crm oficina mecanica, ia para oficina, automacao whatsapp oficina, gestao de oficina" />
+  <link rel="canonical" href="${SITE_URL}/" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="${SITE_NAME} | Blog Oficial" />
   <meta property="og:description" content="${SITE_DESCRIPTION}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="${SITE_URL}" />
+  <meta property="og:url" content="${SITE_URL}/" />
+  <meta property="og:image" content="${SITE_URL}/test-og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="${SITE_NAME} | Blog Oficial" />
+  <meta name="twitter:description" content="${SITE_DESCRIPTION}" />
+  <meta name="twitter:image" content="${SITE_URL}/test-og.png" />
   `
 
   let finalHomeHtml = baseHtml.replace(/<title>.*?<\/title>/i, homeSeoTags)
@@ -305,7 +316,57 @@ async function prerenderSEO() {
 
   fs.writeFileSync(distHtmlPath, finalHomeHtml)
 
-  console.log(`✅ [Prerender] SEO e conteúdo estático injetados para a Home e ${files.length} artigos!`)
+  // Coletar todas as categorias únicas e pré-renderizar suas páginas
+  const categories = Array.from(new Set(postsMetadata.map(p => p.category.toLowerCase())))
+  for (const cat of categories) {
+    const catPosts = postsMetadata.filter(p => p.category.toLowerCase() === cat)
+    const catTitle = `${cat.charAt(0).toUpperCase() + cat.slice(1)} | ${SITE_NAME}`
+    const catDesc = `Artigos e conteúdos sobre ${cat} no blog oficial da ${SITE_NAME}.`
+    const catUrl = `${SITE_URL}/categoria/${encodeURIComponent(cat)}/`
+
+    const catPostsHtml = catPosts.map(p => `
+      <article class="post-card" style="margin-bottom: 40px; padding: 20px; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;">
+        <span style="color: #2f80ed; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">${p.category}</span>
+        <h2 style="font-size: 1.8rem; margin: 10px 0;"><a href="/post/${p.slug}/" style="color: #e6ecf3; text-decoration: none;">${p.title}</a></h2>
+        <p style="color: #8da3b8; line-height: 1.6;">${p.excerpt}</p>
+        <div style="font-size: 0.85rem; color: #4d6a82; margin-top: 15px;">Publicado em ${p.date}</div>
+      </article>
+    `).join('\n')
+
+    const catHtmlContent = `
+      <div class="category-container" style="max-width: 900px; margin: 40px auto; padding: 20px;">
+        <header style="text-align: center; margin-bottom: 50px;">
+          <h1 style="font-size: 2.5rem; text-transform: capitalize;">Categoria: ${cat}</h1>
+          <p style="color: #8da3b8; font-size: 1.1rem;">${catDesc}</p>
+        </header>
+        <main class="posts-list">
+          ${catPostsHtml}
+        </main>
+      </div>
+    `
+
+    const catSeoTags = `
+    <title>${catTitle}</title>
+    <meta name="description" content="${catDesc}" />
+    <link rel="canonical" href="${catUrl}" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="${catTitle}" />
+    <meta property="og:description" content="${catDesc}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="${catUrl}" />
+    `
+
+    let catHtml = baseHtml.replace(/<title>.*?<\/title>/i, catSeoTags)
+    catHtml = catHtml.replace('<div id="root"></div>', `<div id="root">${catHtmlContent}</div>`)
+
+    const catDistDir = path.join(process.cwd(), 'dist', 'categoria', encodeURIComponent(cat))
+    if (!fs.existsSync(catDistDir)) {
+      fs.mkdirSync(catDistDir, { recursive: true })
+    }
+    fs.writeFileSync(path.join(catDistDir, 'index.html'), catHtml)
+  }
+
+  console.log(`✅ [Prerender] SEO e conteúdo estático injetados para a Home, ${categories.length} Categorias e ${files.length} artigos!`)
 }
 
 prerenderSEO()

@@ -30,9 +30,12 @@ export default function Home() {
           <h1 className="hero-title">
             <img
               src="/logo-coreauto-horizontal.png"
-              alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto'}
+              alt="CoreAutoCRM - Sistema Inteligente para Oficinas Mecânicas"
               className="hero-logo-image"
             />
+            <span style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', borderWidth: 0 }}>
+              CoreAutoCRM — Blog Oficial de Inteligência Artificial e Gestão para Oficinas Mecânicas
+            </span>
           </h1>
           <p className="hero-subtitle">
             {siteDescription}
