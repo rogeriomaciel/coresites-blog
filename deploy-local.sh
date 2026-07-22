@@ -46,7 +46,7 @@ fi
 
 echo ""
 echo "📦 3. Compilando o projeto localmente..."
-cd core
+[ -d core ] && cd core || true
 bun run build
 
 if [ ! -d "dist" ]; then
