@@ -19,8 +19,8 @@ export default function PostPage() {
   )
 
   const related = useMemo(
-    () => (slug ? getRelatedPosts(slug, 3) : []),
-    [slug]
+    () => (slug ? getRelatedPosts(slug, 3, language) : []),
+    [slug, language]
   )
 
   // Scroll to top on navigation
