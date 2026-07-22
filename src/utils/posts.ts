@@ -247,21 +247,23 @@ export function searchPosts(query: string, lang?: 'pt' | 'en'): Post[] {
 /**
  * Get related posts (same category or shared tags, excluding current).
  */
-export function getRelatedPosts(currentSlug: string, limit = 3): Post[] {
-  const current = getPostBySlug(currentSlug)
+export function getRelatedPosts(currentSlug: string, limit = 3, lang?: 'pt' | 'en'): Post[] {
+  const current = getPostBySlug(currentSlug, lang)
   if (!current) return []
 
-  const currentLang = current.frontmatter.lang || 'pt'
+  const currentLang = lang || current.frontmatter.lang || 'pt'
   const allPosts = getAllPosts(currentLang).filter(
     (p) => p.frontmatter.slug !== currentSlug
   )
-  const currentTags = new Set(current.frontmatter.tags ?? [])
+  const currentTags = new Set((current.frontmatter.tags ?? []).map((t) => t.toLowerCase()))
+  const currentCategory = (current.frontmatter.category ?? '').toLowerCase()
 
   const scored = allPosts.map((post) => {
     let score = 0
-    if (post.frontmatter.category === current.frontmatter.category) score += 2
+    const postCategory = (post.frontmatter.category ?? '').toLowerCase()
+    if (postCategory === currentCategory) score += 2
     for (const tag of post.frontmatter.tags ?? []) {
-      if (currentTags.has(tag)) score += 1
+      if (currentTags.has(tag.toLowerCase())) score += 1
     }
     return { post, score }
   })
