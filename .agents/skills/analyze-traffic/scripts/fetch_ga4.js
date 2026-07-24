@@ -83,11 +83,44 @@ async function main() {
       sessions: parseInt(row.metricValues[0].value, 10)
     }));
 
+    // 3. Fetch Brazil Locations (Real Traffic)
+    const [locationResponse] = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [
+        {
+          startDate: `${days}daysAgo`,
+          endDate: 'today',
+        },
+      ],
+      dimensions: [
+        { name: 'country' },
+        { name: 'city' }
+      ],
+      metrics: [
+        { name: 'sessions' }
+      ],
+      orderBys: [
+        {
+          desc: true,
+          metric: { metricName: 'sessions' }
+        }
+      ],
+      limit: 50,
+    });
+
+    const brazil_locations = locationResponse.rows
+      .filter(row => row.dimensionValues[0].value === 'Brazil')
+      .map(row => ({
+        city: row.dimensionValues[1].value || 'Unknown',
+        sessions: parseInt(row.metricValues[0].value, 10)
+      }));
+
     // Output JSON result
     console.log(JSON.stringify({
       period: `Last ${days} days`,
       top_pages,
-      top_sources
+      top_sources,
+      brazil_locations
     }, null, 2));
 
   } catch (err) {
