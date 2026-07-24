@@ -61,11 +61,13 @@ async function processPost(slug: string, postPath: string) {
     }
   }
 
+  const postSlug = data.slug || slug.replace(/^pt\//, '')
+
   const payload = {
-    title: data.title || slug,
-    slug: slug,
+    title: data.title || postSlug,
+    slug: postSlug,
     network: network, // ENVIAR A REDE PARA O ROTEAMENTO DO N8N
-    url: `${SITE_URL}/post/${slug}`,
+    url: `${SITE_URL}/post/${postSlug}`,
     excerpt: data.excerpt || '',
     category: data.category || '',
     cover_image: data.cover_image || '',

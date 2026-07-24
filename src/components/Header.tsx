@@ -26,7 +26,7 @@ export default function Header() {
         <Link to="/" className="header-logo" id="header-logo">
           <img
             src="/logo-coreauto-horizontal.png"
-            alt={import.meta.env.VITE_SITE_NAME || 'CoreAuto Blog'}
+            alt="CoreAutoCRM - Sistema de Gestão para Oficinas Mecânicas"
             className="header-logo-image"
           />
         </Link>
