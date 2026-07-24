@@ -135,7 +135,8 @@ async function generatePngFromSvg() {
         const pngWidePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '.png'))
         const pngSquarePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '-sq.png'))
 
-        const frontmatter = findPostFrontmatter(file)
+        const isPngBase = file.endsWith('-base.png')
+        const frontmatter = isPngBase ? null : findPostFrontmatter(file)
         
         // Renderiza formato OG Wide (1200x630)
         await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
