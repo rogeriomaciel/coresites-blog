@@ -69,7 +69,7 @@ function generateSitemap(): void {
     // Individual posts
     ...posts.map(
       (post) => `  <url>
-    <loc>${SITE_URL}/post/${post.slug}${post.lang === 'en' ? '?lang=en' : ''}</loc>
+    <loc>${SITE_URL}/post/${post.slug}/</loc>
     <lastmod>${new Date(post.date).toISOString().split('T')[0]}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -113,7 +113,7 @@ ${urls.join('\n')}
       const { data, content } = matter(raw)
       if (data.published !== false) {
         const postSlug = data.slug || path.basename(file, '.md')
-        const postUrl = `${SITE_URL}/post/${postSlug}${sub === 'en' ? '?lang=en' : ''}`
+        const postUrl = `${SITE_URL}/post/${postSlug}/`
         const title = data.title || postSlug
         const excerpt = data.excerpt || data.meta_description || ''
         
@@ -138,7 +138,7 @@ ${urls.join('\n')}
 
 function generateRobotsTxt(): void {
   const robotsPath = path.resolve(import.meta.dirname, '../dist/robots.txt')
-  const content = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
+  const content = `User-agent: *\nAllow: /\nDisallow:\n\nSitemap: ${SITE_URL}/sitemap.xml\n`
   fs.writeFileSync(robotsPath, content, 'utf-8')
   console.log(`✅ robots.txt gerado: ${robotsPath}`)
 }
