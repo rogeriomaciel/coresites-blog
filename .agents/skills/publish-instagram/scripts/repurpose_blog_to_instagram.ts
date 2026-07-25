@@ -111,8 +111,12 @@ ${keyPoints.slice(2, 4).map((p) => `- 🚀 ${p}`).join("\n")}
 - **Ícone:** Salve este post 📌 | Compartilhe 🚀 | Link na Bio 🔗
 `;
 
-  // Output directory
-  const outDir = path.dirname(filePath);
+  // Output directory: isolado em instagram_posts para não interferir com a pasta content/posts
+  const outDir = path.resolve(process.cwd(), "instagram_posts");
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+
   const baseName = path.basename(filePath, ".md");
   const captionPath = path.join(outDir, `${baseName}_instagram_caption.txt`);
   const slidesPath = path.join(outDir, `${baseName}_instagram_carousel.md`);

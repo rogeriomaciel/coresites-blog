@@ -155,9 +155,12 @@ export function getAllPosts(lang?: 'pt' | 'en'): Post[] {
 
   for (const [path, raw] of Object.entries(postFiles)) {
     const post = parsePost(raw, path)
-    if (post.frontmatter.published !== false) {
-      if (!lang || post.frontmatter.lang === lang) {
-        posts.push(post)
+    // Validação defensiva: ignorar arquivos sem frontmatter válido ou sem título/autor
+    if (post && post.frontmatter && post.frontmatter.title && post.frontmatter.author) {
+      if (post.frontmatter.published !== false) {
+        if (!lang || post.frontmatter.lang === lang) {
+          posts.push(post)
+        }
       }
     }
   }
