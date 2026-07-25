@@ -72,7 +72,7 @@ const postFiles = hasClientPosts
  * We use a custom parser instead of gray-matter to avoid Vite browser-compatibility issues (Buffer/js-yaml).
  */
 function parsePost(raw: string, filePath: string): Post {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   
   let data: Record<string, any> = {}
   let content = raw
@@ -81,7 +81,7 @@ function parsePost(raw: string, filePath: string): Post {
     const yaml = match[1]
     content = match[2]
 
-    const lines = yaml.split('\n')
+    const lines = yaml.split(/\r?\n/)
     let currentKey: keyof PostFrontmatter | null = null
 
     for (const line of lines) {

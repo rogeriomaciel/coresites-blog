@@ -3,14 +3,14 @@ import path from 'node:path'
 
 // Função idêntica à do core/src/utils/posts.ts para parsear o frontmatter de forma robusta
 function parseFrontmatter(rawContent: string) {
-  const match = rawContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
+  const match = rawContent.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
   if (!match) return null
 
   const yaml = match[1]
   const body = match[2]
   const data: Record<string, any> = {}
 
-  const lines = yaml.split('\n')
+  const lines = yaml.split(/\r?\n/)
   let currentKey: string | null = null
 
   for (const line of lines) {
