@@ -5,7 +5,7 @@ import ArticleRenderer from '../components/ArticleRenderer'
 import ReadingProgress from '../components/ReadingProgress'
 import ShareButtons from '../components/ShareButtons'
 import PostCard from '../components/PostCard'
-import PromoBanner from '../components/PromoBanner'
+import StickyProductWidget from '../components/StickyProductWidget'
 import { getPostBySlug, getRelatedPosts, formatDate, resolveAssetPath } from '../utils/posts'
 import { useI18n } from '../utils/i18n'
 
@@ -43,7 +43,8 @@ export default function PostPage() {
   const { frontmatter, content, readingTime } = post
 
   const breadcrumbs = [
-    { name: 'Home', url: '/' },
+    { name: 'Site Principal', url: 'https://coreautocrm.com.br' },
+    { name: 'Blog', url: '/' },
     {
       name: frontmatter.category,
       url: `/categoria/${encodeURIComponent(frontmatter.category.toLowerCase())}`,
@@ -82,17 +83,19 @@ export default function PostPage() {
 
         {/* Article Header */}
         <header className="article-header">
-          {/* Breadcrumbs */}
+          {/* Breadcrumbs with cross-domain link to main site */}
           <nav className="breadcrumbs" id="article-breadcrumbs" aria-label="Breadcrumb">
-            <Link to="/">Home</Link>
+            <a href="https://coreautocrm.com.br" target="_blank" rel="noopener noreferrer">
+              Site CoreAutoCRM ↗
+            </a>
+            <span className="separator">/</span>
+            <Link to="/">Blog</Link>
             <span className="separator">/</span>
             <Link
               to={`/categoria/${encodeURIComponent(frontmatter.category.toLowerCase())}`}
             >
               {frontmatter.category}
             </Link>
-            <span className="separator">/</span>
-            <span>{frontmatter.title}</span>
           </nav>
 
           <h1>{frontmatter.title}</h1>
@@ -134,30 +137,38 @@ export default function PostPage() {
           </div>
         </header>
 
-        {/* Article Content */}
-        <ArticleRenderer content={content} />
+        {/* Layout grid with sidebar on desktop */}
+        <div className="article-layout-grid container">
+          <div className="article-main-column">
+            {/* Article Content */}
+            <ArticleRenderer content={content} />
 
-        {/* Tags */}
-        <div className="content-container" style={{ marginBottom: '2rem' }}>
-          <div className="tags">
-            {frontmatter.tags?.map((tag) => (
-              <span key={tag} className="tag">
-                {tag}
-              </span>
-            ))}
+            {/* Tags */}
+            <div className="tags" style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+              {frontmatter.tags?.map((tag) => (
+                <span key={tag} className="tag">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Share Buttons */}
+            <ShareButtons
+              title={frontmatter.title}
+              url={`/post/${frontmatter.slug}`}
+            />
+          </div>
+
+          {/* Sidebar widget promoting product */}
+          <div className="article-sidebar-column">
+            <StickyProductWidget />
           </div>
         </div>
-
-        {/* Share Buttons */}
-        <ShareButtons
-          title={frontmatter.title}
-          url={`/post/${frontmatter.slug}`}
-        />
       </article>
 
       {/* Related Articles */}
       {related.length > 0 && (
-        <section className="related-section" id="related-articles">
+        <section className="related-section container" id="related-articles">
           <h3 className="section-heading">{t('post.related')}</h3>
           <div className="posts-grid">
             {related.map((relPost) => (
@@ -166,11 +177,6 @@ export default function PostPage() {
           </div>
         </section>
       )}
-
-      {/* Promo CTA Banner */}
-      <div className="container" style={{ paddingBottom: 0 }}>
-        <PromoBanner />
-      </div>
     </>
   )
 }
