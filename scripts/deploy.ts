@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
+import matter from "gray-matter";
 
 function loadEnv(): Record<string, string> {
   const envVars: Record<string, string> = {};
@@ -14,7 +15,6 @@ function loadEnv(): Record<string, string> {
     : null;
 
   if (envPath) {
-    console.log(`📄 Carregando arquivo de ambiente: ${envPath}`);
     const lines = fs.readFileSync(envPath, "utf-8").split("\n");
     for (const line of lines) {
       const trimmed = line.trim();
@@ -46,9 +46,88 @@ function runCmd(cmd: string, cwd = process.cwd()): string {
   }
 }
 
+async function publishSocialMediaForPosts() {
+  console.log("\n📱 5. Verificando artigos para publicação nas Redes Sociais (Instagram, Facebook e LinkedIn)...");
+
+  const postsDir = path.resolve(process.cwd(), "content", "posts", "pt");
+  if (!fs.existsSync(postsDir)) {
+    console.log("ℹ️ Pasta de posts pt/ não encontrada. Pulando redes sociais.");
+    return;
+  }
+
+  const files = fs.readdirSync(postsDir).filter((f) => f.endsWith(".md"));
+  let publishedCount = 0;
+
+  for (const file of files) {
+    const filePath = path.join(postsDir, file);
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const parsed = matter(raw);
+    const data = parsed.data;
+    const publishedNetworks: string[] = Array.isArray(data.social_published)
+      ? data.social_published
+      : [];
+
+    const slug = file.replace(/\.md$/, "");
+
+    const needsInstagram = !publishedNetworks.includes("instagram");
+    const needsFacebook = !publishedNetworks.includes("facebook");
+    const needsLinkedin = !publishedNetworks.includes("linkedin");
+
+    if (needsInstagram || needsFacebook || needsLinkedin) {
+      console.log(`\n==================================================================`);
+      console.log(` 📣 Disparando Redes Sociais para o Artigo: "${data.title || slug}"`);
+      console.log(`==================================================================`);
+
+      // 1. Instagram (1 Carrossel 4:5 + 1 Reels 9:16 com Voz ElevenLabs)
+      if (needsInstagram) {
+        console.log(`\n📸 [INSTAGRAM] Disparando 1 Carrossel + 1 Reels via Meta Graph API...`);
+        try {
+          const igScript = path.resolve(
+            process.cwd(),
+            ".agents",
+            "skills",
+            "publish-instagram",
+            "scripts",
+            "publish_post_to_instagram.ts"
+          );
+          runCmd(`bun run "${igScript}" "content/posts/pt/${file}" --publish`);
+        } catch (igErr) {
+          console.error("❌ Erro na publicação do Instagram:", igErr instanceof Error ? igErr.message : igErr);
+        }
+      }
+
+      // 2. Facebook (via n8n Webhook)
+      if (needsFacebook) {
+        console.log(`\n📘 [FACEBOOK] Disparando Webhook do n8n...`);
+        try {
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network facebook`);
+        } catch (fbErr) {
+          console.error("❌ Erro na publicação do Facebook:", fbErr instanceof Error ? fbErr.message : fbErr);
+        }
+      }
+
+      // 3. LinkedIn (via n8n Webhook)
+      if (needsLinkedin) {
+        console.log(`\n💼 [LINKEDIN] Disparando Webhook do n8n...`);
+        try {
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network linkedin`);
+        } catch (liErr) {
+          console.error("❌ Erro na publicação do LinkedIn:", liErr instanceof Error ? liErr.message : liErr);
+        }
+      }
+
+      publishedCount++;
+    }
+  }
+
+  if (publishedCount === 0) {
+    console.log("✨ Todos os artigos já foram publicados no Instagram, Facebook e LinkedIn!");
+  }
+}
+
 async function deploy() {
   console.log("==================================================================");
-  console.log(" 🚀 CORESITES BLOG — DEPLOY & PUBLISH ENGINE (TYPESCRIPT / BUN)");
+  console.log(" 🚀 CORESITES BLOG — DEPLOY & MULTI-CHANNEL PUBLISH ENGINE (BUN)");
   console.log("==================================================================");
 
   const env = loadEnv();
@@ -132,8 +211,11 @@ async function deploy() {
     process.exit(1);
   }
 
+  // 5. Publicação Automática Multi-Canal (Instagram + Facebook + LinkedIn)
+  await publishSocialMediaForPosts();
+
   console.log("\n==================================================================");
-  console.log(" 🎉 DEPLOY DO BLOG CONCLUÍDO COM SUCESSO EM PRODUÇÃO!");
+  console.log(" 🎉 DEPLOY DO BLOG E PUBLICAÇÃO NAS REDES SOCIAIS FINALIZADOS!");
   console.log("==================================================================");
 }
 
