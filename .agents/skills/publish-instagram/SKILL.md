@@ -1,52 +1,41 @@
 ---
 name: publish-instagram
-description: Super Agente de Instagram para repurposing de artigos do blog em posts de Instagram (Legendas com Hook/CTA/Hashtags, Roteiros de Carrossel) e integracao direta com a Instagram Graph API para agendamento e publicacao automatica.
+description: Super Agente de Instagram para Repurposing de artigos do blog em 2 Formatos Profissionais (1 Carrossel Educativo 4:5 e 1 Reels de Vídeo 9:16 com Locução ElevenLabs), além de integração direta com Meta Graph API.
 tools:
   - bun
-  - python3
+  - ffmpeg
 ---
 
-# Super Agente Instagram: Repurposing & Publicação Automática
+# Super Agente Instagram: Repurposing & Publicação Automática (1 Carrossel + 1 Reels)
 
-Este agente é responsável por ler os artigos em Markdown do blog (`content/posts/pt/`), extrair os melhores insights e transformar o conteúdo em posts engajantes para o Instagram (Carrosséis, Imagens, Reels), permitindo a publicação automática via Instagram Graph API.
+Este agente é responsável por ler os artigos do blog (`content/posts/pt/`), extrair os melhores insights e publicar **estritamente 2 formatos de alto impacto no Instagram**:
+
+1. 🎠 **1 Carrossel Educativo (Slides 4:5 - 1080x1350px)** com design premium Dark Mode no padrão do CoreAuto CRM e chamada para comentários.
+2. 🎥 **1 Vídeo de Reels (Vertical 9:16 - 1080x1920px)** com locução humana por IA (ElevenLabs) e legendas sincronizadas em MP4 via FFmpeg.
 
 ---
 
-## 🚀 Como Utilizar Este Agente
+## 🚀 Como Executar o Fluxo Completo
 
-### 1. Repurposing de Artigo para Instagram (Geração de Legenda + Carrossel)
-Para transformar um artigo em post do Instagram:
+Para publicar automaticamente 1 Carrossel e 1 Reels de qualquer artigo do blog:
+
 ```bash
-bun run core/.agents/skills/publish-instagram/scripts/repurpose_blog_to_instagram.ts content/posts/pt/recuperar-orcamentos-parados-whatsapp-oficina.md
-```
-Este script extrai o artigo e gera:
-- **Legenda Visualmente Otimizada** (Hook forte, contexto, 3-5 pontos de valor, CTA claro e 5-8 hashtags ranqueáveis).
-- **Roteiro de Carrossel de 5 a 7 Slides** (Slide 1: Capa Impactante, Slides 2-5: Conteúdo Prático, Slide Final: Chamada para Ação).
-
----
-
-### 2. Publicação e Agendamento via API (`instagram_publisher.py`)
-Para publicar ou agendar via Instagram Graph API (utilizando credenciais salvas no `.env`):
-```bash
-python3 core/.agents/skills/publish-instagram/scripts/instagram_publisher.py --caption-file output_instagram.txt --image-url https://seu-dominio.com.br/og-image.png --publish
+bun run core/.agents/skills/publish-instagram/scripts/publish_post_to_instagram.ts content/posts/pt/recuperar-orcamentos-parados-whatsapp-oficina.md --publish
 ```
 
 ---
 
-## 📋 Estrutura da Legenda do Instagram (Fórmula de Alta Conversão)
+## 📁 Estrutura da Pasta de Saída
 
-1. **Hook (Gancho de Retenção - Linha 1):** Uma frase marcante com emoji para fazer o usuário parar o scroll.
-2. **Contexto:** 1 a 2 frases curtas sobre a dor/desafio do dono de oficina.
-3. **Pontos de Valor (O Ouro):** 3 a 5 tópicos em marcadores/bullet-points com emojis informativos.
-4. **Chamada para Ação (CTA):** Convite explícito ("Comente 'IA' para receber o link", "Clique no link da bio para ler o guia completo no blog").
-5. **Bloco de Hashtags:** 5 a 8 hashtags altamente relevantes do nicho automotivo/IA (`#oficinamecanica #gestaoautomotiva #coreautocrm #oficinaia #atendimentowhatsapp`).
+Cada post gera os artefatos na pasta `instagram_posts/{slug}/`:
 
----
-
-## 🎨 Estrutura Recomendada para Carrossel de 5 Slides
-
-- **Slide 1 (Capa):** Título chamativo + Subtítulo curto + Elemento visual de destaque.
-- **Slide 2 (O Problema):** A dor atual da oficina (ex: orçamentos esquecidos no WhatsApp).
-- **Slide 3 (A Virada de Chave):** A solução prática (ex: follow-up automático com IA).
-- **Slide 4 (O Resultado):** O impacto real no faturamento/tempo livre do dono.
-- **Slide 5 (Encerramento/CTA):** "Salve este post para consultar depois e leia o artigo completo no link da bio!"
+```
+instagram_posts/{slug}/
+├── 🎠 caption_carousel.txt    # Legenda para o Carrossel
+├── 🎠 slides_data.json        # Estrutura lógica dos slides
+├── 🖼️ slide_1.png ... 5.png   # Imagens em 4:5 (1080x1350px)
+├── 🎥 caption_reels.txt       # Legenda para o Reels
+├── 🎙️ reels_audio.mp3         # Narração ElevenLabs
+├── 🖼️ reels_frame_1...4.png   # Frames verticais 9:16
+└── 🎥 reels_video.mp4         # Vídeo compilado MP4
+```
