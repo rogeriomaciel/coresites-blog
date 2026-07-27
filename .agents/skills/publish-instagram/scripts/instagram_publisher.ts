@@ -45,11 +45,11 @@ export function uploadAssetsToVps(slug: string) {
   console.log(`📡 Sincronizando mídias do post '${slug}' com a VPS em https://blog.coreautocrm.com.br...`);
   const localDir = path.resolve(process.cwd(), "public", "instagram_posts");
 
-  const cmd = `sshpass -p "${password}" ssh -o StrictHostKeyChecking=no ${user}@${vpsIp} "mkdir -p ${remotePath}/instagram_posts" && sshpass -p "${password}" rsync -avz -e "ssh -o StrictHostKeyChecking=no" "${localDir}/" ${user}@${vpsIp}:${remotePath}/instagram_posts/`;
+  const cmd = `sshpass -p "${password}" ssh -o StrictHostKeyChecking=no ${user}@${vpsIp} "mkdir -p ${remotePath}/dist/instagram_posts ${remotePath}/instagram_posts" && sshpass -p "${password}" rsync -avz -e "ssh -o StrictHostKeyChecking=no" "${localDir}/" ${user}@${vpsIp}:${remotePath}/dist/instagram_posts/ && sshpass -p "${password}" rsync -avz -e "ssh -o StrictHostKeyChecking=no" "${localDir}/" ${user}@${vpsIp}:${remotePath}/instagram_posts/`;
 
   try {
     execSync(cmd, { stdio: "ignore" });
-    console.log("  ✅ Mídias sincronizadas no servidor remoto de produção!");
+    console.log("  ✅ Mídias sincronizadas no servidor remoto de produção (dist/instagram_posts)!");
   } catch (err) {
     console.warn("⚠️ Aviso ao sincronizar mídias via SSH:", err instanceof Error ? err.message : err);
   }
@@ -183,7 +183,8 @@ export async function publishFormatToInstagram(
       console.log(`  ✅ Container pai do carrossel criado! ID: ${creationId}`);
 
     } else if (format === "reels") {
-      const videoUrl = `${siteUrl}/instagram_posts/${slug}/reels_video.mp4?v=${Date.now()}`;
+      const reelsFileName = fs.existsSync(path.join(postDir, "reels_veo_final.mp4")) ? "reels_veo_final.mp4" : "reels_video.mp4";
+      const videoUrl = `${siteUrl}/instagram_posts/${slug}/${reelsFileName}?v=${Date.now()}`;
       console.log(`🎥 Criando container de Reels (${videoUrl})...`);
 
       const reelRes = await apiPost(containerEndpoint, {

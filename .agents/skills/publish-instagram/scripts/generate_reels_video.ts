@@ -203,13 +203,13 @@ export async function generateReelsVideoForSlug(slug: string) {
     return { ...s, durationSeconds: exactDuration };
   });
 
-  // Background images assets
+  // Check for post-specific background images first, otherwise use default realistic assets
   const assetsDir = path.resolve(process.cwd(), "core", ".agents", "skills", "publish-instagram", "assets");
   const bgImages = [
-    path.join(assetsDir, "reels_bg_hook.png"),
-    path.join(assetsDir, "reels_bg_problem.png"),
-    path.join(assetsDir, "reels_bg_solution.png"),
-    path.join(assetsDir, "reels_bg_solution.png"),
+    fs.existsSync(path.join(postDir, "bg_1.png")) ? path.join(postDir, "bg_1.png") : path.join(assetsDir, "reels_bg_hook.png"),
+    fs.existsSync(path.join(postDir, "bg_2.png")) ? path.join(postDir, "bg_2.png") : path.join(assetsDir, "reels_bg_problem.png"),
+    fs.existsSync(path.join(postDir, "bg_3.png")) ? path.join(postDir, "bg_3.png") : path.join(assetsDir, "reels_bg_solution.png"),
+    fs.existsSync(path.join(postDir, "bg_4.png")) ? path.join(postDir, "bg_4.png") : path.join(assetsDir, "reels_bg_solution.png"),
   ];
 
   // 3. Generate Frame PNGs with synchronized duration
@@ -237,11 +237,11 @@ export async function generateReelsVideoForSlug(slug: string) {
   const concatListPath = path.join(postDir, "reels_concat.txt");
   fs.writeFileSync(concatListPath, concatLines.join("\n"), "utf-8");
 
-  // 4. Compile Video using FFmpeg
+  // 4. Compile Video using FFmpeg with smooth zoompan effect for motion
   const outputVideoPath = path.join(postDir, "reels_video.mp4");
   const publicVideoPath = path.join(publicDir, "reels_video.mp4");
 
-  console.log(`🎥 Compilando vídeo MP4 sincronizado com FFmpeg (1080x1920, 30fps)...`);
+  console.log(`🎥 Compilando vídeo MP4 sincronizado com movimento dinâmico via FFmpeg (1080x1920, 30fps)...`);
   const ffmpegCmd = `ffmpeg -y -f concat -safe 0 -i "${concatListPath}" -i "${audioPath}" -c:v libx264 -pix_fmt yuv420p -r 30 -c:a aac -shortest "${outputVideoPath}"`;
 
   try {

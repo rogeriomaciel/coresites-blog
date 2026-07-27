@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { repurposePostToInstagram } from "./repurpose_blog_to_instagram";
 import { generateCarouselImagesForSlug } from "./generate_carousel_images";
-import { generateReelsVideoForSlug } from "./generate_reels_video";
+import { runVeoReelsPipeline } from "./generate_veo_reels";
 import { publishFormatToInstagram } from "./instagram_publisher";
 
 function copyDirectory(src: string, dest: string) {
@@ -23,14 +23,14 @@ function copyDirectory(src: string, dest: string) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const target = args[0] || "content/posts/pt/recuperar-orcamentos-parados-whatsapp-oficina.md";
-  const publishFlag = args.includes("--publish") || true;
+  const target = args[0] || "content/posts/pt/como-usar-ia-na-minha-oficina.md";
+  const publishFlag = args.includes("--publish");
 
   console.log("==================================================================");
-  console.log(" 🚀 SUPER AGENTE INSTAGRAM - PUBLICAÇÃO PADRÃO (1 CARROSSEL + 1 REELS)");
+  console.log(" 🚀 SUPER AGENTE INSTAGRAM - VEO 2.0 + ELEVENLABS + CARROSSEL");
   console.log("==================================================================");
   console.log(`📌 Post-alvo: ${target}`);
-  console.log(`📡 Modo de publicação: DISPARAR 1 CARROSSEL + 1 REELS VIA META GRAPH API\n`);
+  console.log(`📡 Modo de publicação: 1 CARROSSEL (4:5) + 1 REELS COM VEO 2.0 (9:16)\n`);
 
   // Step 1: Repurposing
   console.log("👉 ETAPA 1/4: Repurposing do Artigo para Legendas e Roteiros...");
@@ -40,28 +40,31 @@ async function main() {
   console.log("👉 ETAPA 2/4: Renderizando Slides do Carrossel (4:5)...");
   const carouselFiles = await generateCarouselImagesForSlug(slug);
 
-  // Step 3: Render Reels Video MP4 with ElevenLabs voiceover
-  console.log("👉 ETAPA 3/4: Renderizando Vídeo de Reels 9:16 com Locução ElevenLabs...");
-  const videoPath = await generateReelsVideoForSlug(slug);
+  // Step 3: Render Reels Video MP4 (Google Veo 2.0 + ElevenLabs + Spoken Subtitles 72pt + Outro Signature)
+  console.log("👉 ETAPA 3/4: Renderizando Vídeo Reels 9:16 (Google Veo 2.0 + ElevenLabs + Legendas + Outro)...");
+  await runVeoReelsPipeline({ markdownPath: target });
 
   // Step 4: Synchronize assets to public web directory
   const publicOutDir = path.resolve(process.cwd(), "public", "instagram_posts", slug);
   console.log(`\n📁 Sincronizando mídias geradas para pasta pública: ${publicOutDir}...`);
   copyDirectory(outDir, publicOutDir);
-  console.log("  ✅ Mídias estáticas sincronizadas com a web estática!\n");
+  console.log("  ✅ Mídias sincronizadas com o diretório público estático!\n");
 
-  // Step 5: Publish exactly 2 Formats (1 Carousel + 1 Reels)
-  console.log("👉 ETAPA 4/4: Disparando Publicação Real na Meta Graph API (1 Carrossel + 1 Reels)...");
-  
-  console.log("\n🎠 1/2: Publicando Carrossel de Slides (4:5)...");
-  await publishFormatToInstagram(slug, "carousel", publishFlag);
+  // Step 5: Publish if --publish flag is present
+  if (publishFlag) {
+    console.log("👉 ETAPA 4/4: Disparando Publicação Real na Meta Graph API (1 Carrossel + 1 Reels)...");
+    
+    console.log("\n🎠 1/2: Publicando Carrossel de Slides (4:5)...");
+    await publishFormatToInstagram(slug, "carousel", true);
 
-  console.log("\n🎥 2/2: Publicando Vídeo de Reels (9:16 com voz ElevenLabs)...");
-  await publishFormatToInstagram(slug, "reels", publishFlag);
+    console.log("\n🎥 2/2: Publicando Vídeo de Reels (9:16 com Veo 2.0 + ElevenLabs)...");
+    await publishFormatToInstagram(slug, "reels", true);
+  } else {
+    console.log("ℹ️ Modo apenas geração local concluído (passe '--publish' para disparar na Meta Graph API).");
+  }
 
   console.log("==================================================================");
-  console.log(" 🎉 PUBLICAÇÃO PADRÃO DO INSTAGRAM FINALIZADA COM SUCESSO!");
-  console.log(" 📌 Formatos Publicados: 1 Carrossel (4:5) + 1 Reels Vídeo (9:16)");
+  console.log(" 🎉 PROCESSAMENTO DO INSTAGRAM CONCLUÍDO COM SUCESSO!");
   console.log("==================================================================");
 }
 
