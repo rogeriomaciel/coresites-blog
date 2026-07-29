@@ -1,0 +1,31 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,54,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,3,2,2,80,80,260,1
+Style: Highlight,Arial,58,&H0000FFFF,&H000000FF,&H00000000,&H80000000,1,0,0,0,100,100,0,0,1,3,2,2,80,80,260,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.28,Default,,0,0,0,,Você já parou pra calcular\Nquanto dinheiro sua
+Dialogue: 0,0:00:03.28,0:00:05.71,Default,,0,0,0,,oficina perde por semana\Ncom isso?
+Dialogue: 0,0:00:05.71,0:00:08.28,Default,,0,0,0,,O que é GEO e como\Notimizar conteúdo
+Dialogue: 0,0:00:08.28,0:00:08.92,Default,,0,0,0,,para IAs.
+Dialogue: 0,0:00:08.92,0:00:12.64,Default,,0,0,0,,GEO (Generative Engine\NOptimization) é o processo\Nde
+Dialogue: 0,0:00:12.64,0:00:16.28,Default,,0,0,0,,otimizar conteúdo para que\Nmotores de IA generativa
+Dialogue: 0,0:00:16.28,0:00:19.85,Default,,0,0,0,,— como Google Gemini,\NChatGPT, Perplexity e\NClaude
+Dialogue: 0,0:00:19.85,0:00:22.78,Default,,0,0,0,,— citem você como fonte\Nnas respostas que
+Dialogue: 0,0:00:22.78,0:00:23.99,Default,,0,0,0,,dão aos usuários.
+Dialogue: 0,0:00:23.99,0:00:27.35,Default,,0,0,0,,Enquanto o SEO tradicional\Nfoca em aparecer nos
+Dialogue: 0,0:00:27.35,0:00:30.27,Default,,0,0,0,,resultados de busca do\NGoogle, o GEO foca
+Dialogue: 0,0:00:30.27,0:00:33.99,Default,,0,0,0,,em fazer sua informação\Nser absorvida e\Nreferenciada
+Dialogue: 0,0:00:33.99,0:00:35.92,Default,,0,0,0,,pelos modelos de\Nlinguagem.
+Dialogue: 0,0:00:35.92,0:00:38.92,Default,,0,0,0,,Enquanto você lê isso, tem\Ncarro parado no
+Dialogue: 0,0:00:38.92,0:00:40.99,Default,,0,0,0,,seu pátio esperando\Nresposta.
+Dialogue: 0,0:00:40.99,0:00:42.20,Default,,0,0,0,,Isso tem solução.
+Dialogue: 0,0:00:42.20,0:00:45.27,Default,,0,0,0,,Assiste até o fim e\Ndescobre como resolver.
+Dialogue: 0,0:00:45.27,0:00:48.20,Highlight,,0,0,0,,Acessa o link na bio pro\Nartigo completo!

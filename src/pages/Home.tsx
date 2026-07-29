@@ -211,9 +211,34 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="empty-state">
-                <h3>{t('search.empty')}</h3>
-                <p>{t('search.empty_sub')}</p>
+              <div className="empty-state empty-state--search" id="search-empty-state">
+                <div className="empty-state-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                  </svg>
+                </div>
+                <h3 className="empty-state-title">
+                  {language === 'pt'
+                    ? <>Nenhum artigo encontrado para <strong>&ldquo;{query}&rdquo;</strong></>
+                    : <>No articles found for <strong>&ldquo;{query}&rdquo;</strong></>}
+                </h3>
+                <p className="empty-state-desc">
+                  {language === 'pt'
+                    ? 'Tente termos diferentes ou explore os temas mais buscados pelos donos de oficina:'
+                    : 'Try different terms or browse popular topics:'}
+                </p>
+                <div className="empty-state-suggestions">
+                  <button type="button" onClick={() => navigate('/?q=WhatsApp')} className="empty-state-pill">WhatsApp</button>
+                  <button type="button" onClick={() => navigate('/?q=Orçamento')} className="empty-state-pill">Orçamento</button>
+                  <button type="button" onClick={() => navigate('/?q=Gestão')} className="empty-state-pill">Gestão</button>
+                  <button type="button" onClick={() => navigate('/?q=IA')} className="empty-state-pill">IA</button>
+                  <button type="button" onClick={() => navigate('/?q=Mecânico')} className="empty-state-pill">Mecânico</button>
+                </div>
+                <Link to="/" className="empty-state-cta" id="search-empty-see-all">
+                  {language === 'pt' ? '← Ver todos os artigos' : '← See all articles'}
+                </Link>
               </div>
             )}
           </>

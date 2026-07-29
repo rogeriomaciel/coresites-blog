@@ -67,63 +67,21 @@ async function getAccessTokenFromServiceAccount(keyFilePath: string): Promise<{ 
   };
 }
 
-export async function generateVideoWithGoogleVeo(config: VeoGenerationConfig): Promise<string> {
-  const credentialsPath =
-    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
-    path.join(process.cwd(), "security/gen-lang-client-0596096564-1926acacbda4.json");
-
-  const { accessToken, projectId: defaultProjectId } = await getAccessTokenFromServiceAccount(credentialsPath);
-  const projectId = config.projectId || process.env.GCP_PROJECT_ID || defaultProjectId;
-  const location = config.location || process.env.GCP_LOCATION || "us-central1";
-
-  console.log(`🚀 Iniciando solicitação de vídeo ao Google Veo 2.0 (Vertex AI)...`);
-  console.log(` 🎬 Prompt: "${config.prompt}"`);
-
-  const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/veo-2.0-generate-001:predictLongRunning`;
-
-  const parameters: any = {
-    aspectRatio: config.aspectRatio || "9:16",
-    durationSeconds: config.durationSeconds || 5,
-    sampleCount: 1,
-  };
-
-  if (config.gcsBucket) {
-    parameters.outputGcsUri = `gs://${config.gcsBucket}/veo_outputs/`;
-  }
-
-  const payload = {
-    instances: [
-      {
-        prompt: config.prompt,
-      },
-    ],
-    parameters,
-  };
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Erro ao iniciar geração de vídeo no Veo (${response.status}): ${errText}`);
-  }
-
-  const initialResult = (await response.json()) as any;
-  console.log(`✅ Operação iniciada no Google Cloud! ID: ${initialResult.name}`);
-  return initialResult.name;
+// =============================================================================
+// ⛔ GERAÇÃO DE VÍDEO COM VERTEX AI (GOOGLE VEO 2.0) — DESATIVADA E TRAVADA
+// Motivo: custo elevado da API Vertex AI / Veo 2.0.
+// NÃO remova este bloco sem revisão e autorização explícita do responsável.
+// Data de bloqueio: 2026-07-28
+// =============================================================================
+export async function generateVideoWithGoogleVeo(
+  _config: VeoGenerationConfig
+): Promise<string> {
+  throw new Error(
+    "[BLOQUEADO] Geração de vídeo via Google Veo 2.0 / Vertex AI está DESATIVADA.\n" +
+    "Motivo: custo elevado da API Vertex AI.\n" +
+    "Para reativar, restaure a implementação original em generate_veo_video.ts."
+  );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  generateVideoWithGoogleVeo({
-    prompt: "Cinematic 4k video of an auto mechanic repairing a car in a modern shop",
-    outputPath: "instagram_posts/test_veo_real.mp4",
-  })
-    .then((res) => console.log(`\n🎉 Operação criada com sucesso no Google Veo!`))
-    .catch((err) => console.error("\n❌ Erro:", err.message));
-}
+// ⛔ CLI DESATIVADO — Vertex AI / Veo 2.0 está bloqueado por custo.
+// if (import.meta.url === `file://${process.argv[1]}`) { ... }

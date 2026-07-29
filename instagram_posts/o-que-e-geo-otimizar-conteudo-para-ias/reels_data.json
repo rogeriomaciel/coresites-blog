@@ -1,0 +1,35 @@
+{
+  "title": "O que é GEO e como otimizar conteúdo para IAs",
+  "totalDurationSeconds": 28,
+  "voice": "pt-BR-AntonioNeural",
+  "sections": [
+    {
+      "step": 1,
+      "title": "HOOK (0-5s)",
+      "voiceover": "Dono de oficina mecânica, você já parou pra pensar sobre o que é geo e como otimizar conteúdo para ias? Se liga nisso!",
+      "onScreenText": "⚠️ ATENÇÃO DONO DE OFICINA!\nO que é GEO e como otimizar conteúdo para IAs",
+      "durationSeconds": 5
+    },
+    {
+      "step": 2,
+      "title": "DOR / PROBLEMA (5-12s)",
+      "voiceover": "GEO (Generative Engine Optimization) é o processo de otimizar conteúdo para que motores de IA generativa — como Google Gemini, ChatGPT, Perplexity e Claude — citem você como fonte ",
+      "onScreenText": "❌ O PROBLEMA:\nO que é GEO?",
+      "durationSeconds": 7
+    },
+    {
+      "step": 3,
+      "title": "SOLUÇÃO PERSUASIVA (12-20s)",
+      "voiceover": "Enquanto o SEO tradicional foca em aparecer nos resultados de busca do Google, o GEO foca em fazer sua informação ser absorvida e referenciada pelos modelos de linguagem.",
+      "onScreenText": "🧠 A SOLUÇÃO COM IA:\nComo as IAs escolhem quais fontes citar?",
+      "durationSeconds": 8
+    },
+    {
+      "step": 4,
+      "title": "CTA IMPERDÍVEL (20-28s)",
+      "voiceover": "Quer ver como aplicar essa transformação na sua oficina hoje mesmo? Comente a palavra OFICINA aqui embaixo ou acesse o link na bio pra ler o artigo completo no blog do CoreAuto CRM!",
+      "onScreenText": "🚀 QUER APLICAR NA SUA OFICINA?\nComente \"OFICINA\" ou acesse a bio! 🔗",
+      "durationSeconds": 8
+    }
+  ]
+}

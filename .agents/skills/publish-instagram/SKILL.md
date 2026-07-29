@@ -1,41 +1,38 @@
 ---
 name: publish-instagram
-description: Super Agente de Instagram para Repurposing de artigos do blog em 2 Formatos Profissionais (1 Carrossel Educativo 4:5 e 1 Reels de Vídeo 9:16 com Locução ElevenLabs), além de integração direta com Meta Graph API.
+description: Super Agente de Instagram para Repurposing de artigos do blog em 2 Formatos Profissionais (1 Carrossel Educativo 4:5 e 1 Reels de Vídeo 9:16 com Locução ElevenLabs). ⚠️ GERAÇÃO DE VÍDEO VIA GOOGLE VEO 2.0 / VERTEX AI ESTÁ DESATIVADA (custo elevado). Use o pipeline com fundo estático.
 tools:
   - bun
   - ffmpeg
 ---
 
-# Super Agente Instagram: Repurposing & Publicação Automática (1 Carrossel + 1 Reels com Google Veo 2.0)
+# Super Agente Instagram: Repurposing & Publicação Automática (1 Carrossel + 1 Reels)
+
+> [!CAUTION]
+> **Google Veo 2.0 / Vertex AI DESATIVADO** — A geração de vídeo via Vertex AI foi **bloqueada permanentemente** por custo elevado (2026-07-28).
+> O Reels é gerado com **fundo estático** (cor sólida dark). NÃO tente usar ou restaurar o `generate_veo_reels.ts` ou `generate_veo_video.ts` para chamadas Vertex sem autorização explícita.
 
 Este agente é responsável por ler os artigos do blog (`content/posts/pt/`), extrair os melhores insights e publicar **estritamente 2 formatos de alto impacto no Instagram**:
 
 1. 🎠 **1 Carrossel Educativo (Slides 4:5 - 1080x1350px)** com design premium Dark Mode no padrão do CoreAuto CRM e chamada para comentários.
-2. 🎥 **1 Vídeo de Reels (Vertical 9:16 - 1080x1920px)** alimentado por **Google Veo 2.0** para o fundo cinematográfico em movimento, **locução persuasiva ElevenLabs** com gatilhos de vendas/CTA final, e **legendas animadas estilo Reels** queimadas via FFmpeg.
+2. 🎥 **1 Vídeo de Reels (Vertical 9:16 - 1080x1920px)** com **locução persuasiva ElevenLabs**, **legendas animadas estilo Reels** queimadas via FFmpeg, e **fundo dark estático** (sem Vertex AI).
 
 ---
 
-## 🎯 Regras de Ouro para o Reels (Google Veo 2.0 + ElevenLabs)
+## 🎯 Regras de Ouro para o Reels (ElevenLabs + Fundo Estático)
 
 1. **Roteiro de Narração Pain-First (Dor → Agitação → Custo → Solução → CTA)**:
    - **Hook (0-3s)**: Pergunta sobre dinheiro perdido ou dor específica do dono de oficina. O CoreAutoCRM **não aparece no hook**. Ex: *"Você já calculou quanto sua oficina perde por semana com isso?"*
-   - **Agitação da Dor (3-12s)**: Mostra o problema em detalhes com impacto financeiro (custo de rampa parada, orçamentos perdidos, equipe parada).
-   - **Custo da Inércia (12-18s)**: Mostra o que acontece se não resolver. Ex: *"Enquanto você lê isso, tem carro parado no pátio esperando resposta."*
-   - **Solução como Consequência (18-22s)**: O CoreAutoCRM aparece como ferramenta natural da solução — não como o personagem principal.
+   - **Agitação da Dor (3-12s)**: Mostra o problema em detalhes com impacto financeiro.
+   - **Custo da Inércia (12-18s)**: Mostra o que acontece se não resolver.
+   - **Solução como Consequência (18-22s)**: O CoreAutoCRM aparece como ferramenta natural da solução.
    - **CTA (22-27s)**: Instagram: *"Acessa o link na bio."* YouTube: *"Assiste até o fim e se inscreve."*
 
-2. **Vídeo de Fundo Cinematográfico (Google Veo 2.0)**:
-   - Utilizar prompts em inglês ultra-detalhados no modelo `veo-2.0-generate-001` no formato 9:16 (vertical).
-   - Foco em cenas realistas de oficina mecânica moderna, iluminação cinematográfica e movimento suave.
+2. **Vídeo de Fundo**: Fundo dark estático (`color=c=0x070a12`). ~~Google Veo 2.0 desativado por custo.~~
 
-3. **Legendas Sincronizadas da Fala (Closed Captions / Transcrição do Áudio)**:
-   - **MANDATÓRIO**: A legenda exibida na tela DEVE ser a **transcrição exata da fala do locutor em tempo real**, dividida em frases curtas ou blocos de palavras (estilo Reels/TikTok). NÃO usar apenas título fixo do post.
-   - Posicionamento central inferior (área segura do Instagram Reels) com estilo legível (fonte em destaque com fundo semi-transparente ou traço).
-   - Destaque visual em palavras-chave importantes (ex: "WhatsApp", "IA", "CoreAutoCRM", "Orçamento", "Comente IA").
+3. **Legendas Sincronizadas da Fala**: A legenda exibida na tela DEVE ser a transcripção exata da fala, dividida em frases curtas (estilo Reels/TikTok).
 
-4. **Marca d'Água Discreta e Trilha Sonora de Fundo**:
-   - **Logo**: Marca d'água discreta posicionada no canto superior direito (`logo-coreauto-horizontal.png`).
-   - **Música de Fundo**: Trilha sonora mixada suavemente (~10% de volume) com o áudio `Click_Magnet_Modern_Marketing_Groove.mp3`, garantindo nitidez total na voz da ElevenLabs.
+4. **Marca d’Água e Trilha Sonora**: Logo discreta no canto superior direito + música de fundo ~10% de volume.
 
 
 ---
@@ -44,8 +41,14 @@ Este agente é responsável por ler os artigos do blog (`content/posts/pt/`), ex
 
 Para publicar automaticamente 1 Carrossel e 1 Reels (+ Shorts do YouTube) de qualquer artigo do blog:
 
+> [!WARNING]
+> NÃO execute `generate_veo_reels.ts` diretamente — o CLI está desativado (Vertex AI bloqueado).
+> Use o pipeline de repurposing + video padrão:
+
 ```bash
-bun run core/.agents/skills/publish-instagram/scripts/generate_veo_reels.ts content/posts/pt/nome-do-artigo.md
+# Gerar conteúdo (carrossel + reels com fundo estático)
+bun run core/.agents/skills/publish-instagram/scripts/repurpose_blog_to_instagram.ts content/posts/pt/nome-do-artigo.md
+bun run core/.agents/skills/publish-instagram/scripts/generate_reels_video.ts {slug}
 ```
 
 ---
@@ -81,8 +84,8 @@ instagram_posts/{slug}/
 ├── 🎠 slides_data.json        # Estrutura lógica dos slides
 ├── 🖼️ slide_1.png ... 5.png   # Imagens em 4:5 (1080x1350px)
 ├── 🎥 caption_reels.txt       # Legenda para o Reels
-├── 🎙️ reels_narration.mp3     # Narração persuasiva ElevenLabs
-├── 🎥 veo_background.mp4      # Vídeo 4K em movimento (Google Veo 2.0)
-└── 🎥 reels_veo_final.mp4     # Vídeo compilado final com legendas MP4
+├── 🎤 reels_narration.mp3     # Narração persuasiva ElevenLabs
+└── 🎥 reels_video.mp4         # Vídeo compilado final com legendas MP4 (fundo estático)
 ```
 
+> **Nota:** O arquivo `veo_background.mp4` não é mais gerado. O fundo do Reels é uma cor sólida dark (`#070a12`) com legendas e marca d’água sobrepostas.

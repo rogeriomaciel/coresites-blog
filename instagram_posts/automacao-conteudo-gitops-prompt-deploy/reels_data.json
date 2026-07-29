@@ -1,0 +1,35 @@
+{
+  "title": "Automação de Conteúdo com GitOps: Do Prompt ao Deploy em 2 Minutos",
+  "totalDurationSeconds": 28,
+  "voice": "pt-BR-AntonioNeural",
+  "sections": [
+    {
+      "step": 1,
+      "title": "HOOK (0-5s)",
+      "voiceover": "Dono de oficina mecânica, você já parou pra pensar sobre automação de conteúdo com gitops: do prompt ao deploy em 2 minutos? Se liga nisso!",
+      "onScreenText": "⚠️ ATENÇÃO DONO DE OFICINA!\nAutomação de Conteúdo com GitOps: Do Prompt ao Deploy em 2 Minutos",
+      "durationSeconds": 5
+    },
+    {
+      "step": 2,
+      "title": "DOR / PROBLEMA (5-12s)",
+      "voiceover": "GitOps é uma prática de DevOps onde o repositório Git é a fonte única de verdade. Aplicando isso a conteúdo, cada artigo é um arquivo no repositório, e publicar é simplesmente faze",
+      "onScreenText": "❌ O PROBLEMA:\nO Conceito de GitOps para Conteúdo",
+      "durationSeconds": 7
+    },
+    {
+      "step": 3,
+      "title": "SOLUÇÃO PERSUASIVA (12-20s)",
+      "voiceover": "O processo do prompt ao site atualizado funciona assim:",
+      "onScreenText": "🧠 A SOLUÇÃO COM IA:\nO Fluxo Completo",
+      "durationSeconds": 8
+    },
+    {
+      "step": 4,
+      "title": "CTA IMPERDÍVEL (20-28s)",
+      "voiceover": "Quer ver como aplicar essa transformação na sua oficina hoje mesmo? Comente a palavra OFICINA aqui embaixo ou acesse o link na bio pra ler o artigo completo no blog do CoreAuto CRM!",
+      "onScreenText": "🚀 QUER APLICAR NA SUA OFICINA?\nComente \"OFICINA\" ou acesse a bio! 🔗",
+      "durationSeconds": 8
+    }
+  ]
+}

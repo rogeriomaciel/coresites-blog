@@ -31,10 +31,27 @@ export default function PostPage() {
   if (!post) {
     return (
       <div className="not-found" id="post-not-found">
-        <h1>404</h1>
-        <p>{t('post.not_found')}</p>
-        <Link to="/" className="btn-primary">
-          {t('post.back_home')}
+        <div className="not-found-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+        <h1 className="not-found-code">404</h1>
+        <p className="not-found-msg">
+          {language === 'pt'
+            ? 'Esse artigo não existe ou foi movido. Mas temos muito conteúdo prático para você:'
+            : 'This article doesn\'t exist or was moved. But we have great content for you:'}
+        </p>
+        <div className="not-found-suggestions">
+          <Link to="/?q=WhatsApp" className="not-found-pill">WhatsApp</Link>
+          <Link to="/?q=Orçamento" className="not-found-pill">Orçamento</Link>
+          <Link to="/?q=Gestão" className="not-found-pill">Gestão</Link>
+          <Link to="/?q=IA" className="not-found-pill">IA</Link>
+        </div>
+        <Link to="/" className="btn-primary" id="not-found-home-btn">
+          {language === 'pt' ? '← Ver todos os artigos' : '← See all articles'}
         </Link>
       </div>
     )

@@ -180,64 +180,23 @@ async function getAccessToken(keyFilePath: string) {
   return { accessToken: data.access_token, projectId: keyContent.project_id };
 }
 
-async function generateAndDownloadVeoVideo(prompt: string, outputPath: string, durationSeconds = 8): Promise<string> {
-  const keyPath = path.join(process.cwd(), "security/gen-lang-client-0596096564-1926acacbda4.json");
-  const { accessToken, projectId } = await getAccessToken(keyPath);
-  const location = "us-central1";
-
-  const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/veo-2.0-generate-001:predictLongRunning`;
-
-  console.log(`🎥 Prompt do Google Veo 2.0 (${durationSeconds}s): "${prompt}"`);
-
-  const initResp = await fetch(endpoint, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      instances: [{ prompt }],
-      parameters: { aspectRatio: "9:16", durationSeconds, sampleCount: 1 },
-    }),
-  });
-
-  if (!initResp.ok) {
-    const errTxt = await initResp.text();
-    throw new Error(`Erro API Veo (${initResp.status}): ${errTxt}`);
-  }
-
-  const initData = (await initResp.json()) as any;
-  const opName = initData.name;
-  const opId = opName.split("/").pop();
-
-  const pollEndpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/veo-2.0-generate-001:fetchPredictOperation`;
-
-  let attempts = 0;
-  while (attempts < 36) {
-    await new Promise((r) => setTimeout(r, 10000));
-    attempts++;
-    console.log(`   ⏳ Aguardando renderização do Google Veo 2.0 (${attempts * 10}s)...`);
-
-    const pollResp = await fetch(pollEndpoint, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        operationName: `projects/${projectId}/locations/${location}/publishers/google/models/veo-2.0-generate-001/operations/${opId}`,
-      }),
-    });
-
-    if (pollResp.ok) {
-      const data = (await pollResp.json()) as any;
-      if (data.done) {
-        const videoBytes = data.response?.videos?.[0]?.bytesBase64Encoded;
-        if (videoBytes) {
-          const videoBuffer = Buffer.from(videoBytes, "base64");
-          fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-          fs.writeFileSync(outputPath, videoBuffer);
-          return outputPath;
-        }
-      }
-    }
-  }
-
-  throw new Error("Timeout aguardando o vídeo do Google Veo.");
+// =============================================================================
+// ⛔ GERAÇÃO DE VÍDEO COM VERTEX AI (GOOGLE VEO 2.0) — DESATIVADA E TRAVADA
+// Motivo: custo elevado da API Vertex AI / Veo 2.0.
+// NÃO remova este bloco sem revisão e autorização explícita do responsável.
+// O pipeline continua funcional usando o fallback de fundo estático (cor sólida).
+// Data de bloqueio: 2026-07-28
+// =============================================================================
+async function generateAndDownloadVeoVideo(
+  _prompt: string,
+  _outputPath: string,
+  _durationSeconds = 8
+): Promise<string> {
+  throw new Error(
+    "[BLOQUEADO] Geração de vídeo via Google Veo 2.0 / Vertex AI está DESATIVADA.\n" +
+    "Motivo: custo elevado. O pipeline usará o fallback de fundo estático.\n" +
+    "Para reativar, restaure a implementação original em generate_veo_reels.ts."
+  );
 }
 
 export async function runVeoReelsPipeline(options: VeoReelsPipelineOptions) {
@@ -474,7 +433,9 @@ export async function runVeoReelsPipeline(options: VeoReelsPipelineOptions) {
   console.log(`🌐 Arquivo copiado para pasta pública: ${publicVideoPath}\n`);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const postFile = process.argv[2] || "content/posts/pt/como-oficina-faturar-mais-tempo-livre.md";
-  runVeoReelsPipeline({ markdownPath: postFile }).catch(console.error);
-}
+// ⛔ CLI DESATIVADO — Vertex AI / Veo 2.0 está bloqueado por custo.
+// A execução do pipeline continua disponível mas usará o fallback de fundo estático.
+// if (import.meta.url === `file://${process.argv[1]}`) {
+//   const postFile = process.argv[2] || "content/posts/pt/como-oficina-faturar-mais-tempo-livre.md";
+//   runVeoReelsPipeline({ markdownPath: postFile }).catch(console.error);
+// }

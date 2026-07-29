@@ -11,8 +11,8 @@ function loadEnv(): Record<string, string> {
   const envPath = fs.existsSync(rootEnvPath)
     ? rootEnvPath
     : fs.existsSync(localEnvPath)
-    ? localEnvPath
-    : null;
+      ? localEnvPath
+      : null;
 
   if (envPath) {
     const lines = fs.readFileSync(envPath, "utf-8").split("\n");
@@ -181,7 +181,7 @@ async function deploy() {
 
   // 2. Compilação do Projeto (Build Estático)
   console.log("\n📦 2. Compilando o blog com Bun (`bun run build`)...");
-  runCmd("bun run build");
+  runCmd("/rogerio/core/coreautocrm-blog/core/bun run build");
 
   const distDir = path.resolve(process.cwd(), "dist");
   if (!fs.existsSync(distDir)) {

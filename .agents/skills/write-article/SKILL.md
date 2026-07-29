@@ -399,12 +399,60 @@ keywords:
 category: 'Gestão | Automação | IA | Financeiro | Operação'
 tags:
   - [Tags específicas do tema — nunca tags genéricas como "IA" sozinha]
-cover_image: /images/posts/slug-do-artigo.svg
+cover_image: /images/posts/slug-do-artigo.png
 published: true
 social_published: []
 aeo_enhanced: true
 ---
 ```
+
+---
+
+## 🖼️ Regra #10 — Imagem de Capa: Foto-Realística, Não Gráfico
+
+> ⚠️ **OBRIGATÓRIO.** A imagem de capa é o primeiro elemento visual que o leitor vê. Ela deve ser uma **fotografia realística** do cotidiano de uma oficina mecânica — não um infográfico, gráfico de barras, SVG decorativo ou dashboard genérico.
+
+### Como gerar a imagem de capa:
+
+Use a tool `generate_image` com o seguinte padrão de prompt:
+
+```
+Photorealistic editorial photograph of [cena específica relacionada ao tema do artigo].
+Brazilian auto repair shop setting. Professional DSLR photo, natural lighting, shallow depth of field.
+No text overlays, no charts, no diagrams. Cinematic, documentary style.
+Aspect ratio 16:9. Wide shot or medium shot. High detail, sharp focus on main subject.
+```
+
+### Exemplos de prompts corretos por tema:
+
+| Tema do artigo | Prompt da cena |
+|---|---|
+| Orçamentos parados no WhatsApp | Mechanic looking at phone in a busy auto shop, worried expression, cars in background waiting for service |
+| Elevador parado / carro na rampa | Car lifted on hydraulic lift in auto repair shop, no mechanic present, lift idle, other cars queued |
+| Follow-up de clientes | Auto shop consultant at front desk looking at tablet showing WhatsApp conversations |
+| Gestão financeira da oficina | Auto shop owner reviewing paperwork at desk, frustrated expression, cluttered workshop behind him |
+| Equipe e mecânicos | Team of mechanics working together in well-lit auto repair shop, professional environment |
+| IA e automação | Mechanic in blue uniform using tablet in a modern auto shop, looking at dashboard |
+
+### Onde salvar:
+
+```bash
+# O generate_image salva automaticamente como artifact.
+# Depois, copie para:
+public/images/posts/{slug}.png
+```
+
+### Regras da imagem:
+- ✅ Foto-realística, estilo editorial/documental
+- ✅ Cena específica do cotidiano de oficina mecânica
+- ✅ Relacionada ao problema/tema do artigo
+- ✅ Sem texto sobreposto
+- ✅ Sem gráficos, dashboards ou elementos UI
+- ✅ Proporção 16:9 (1200×630px ideal)
+- ❌ SVG de infográfico ou gráfico genérico
+- ❌ Imagem genérica de tecnologia (circuito, robô, IA abstrata)
+- ❌ Dashboard ou mockup de software
+- ❌ Stock photo de homem de terno com tablet (genérico demais)
 
 **Limites rígidos:**
 - `title`: **máximo 65 caracteres** (o Google corta depois disso no resultado de busca)
@@ -533,6 +581,7 @@ você acabou de perder R$90. Amanhaã vai acontecer de novo."
 
 ## 💾 Local do Arquivo
 
-- **Projeto raiz (pai):** `content/posts/pt/{slug}.md`
-- **Operando a partir do core:** `../content/posts/pt/{slug}.md`
-- **Imagens:** `public/images/posts/{slug}.svg`
+- **Artigo (projeto raiz/pai):** `content/posts/pt/{slug}.md`
+- **Artigo (operando a partir do core):** `../content/posts/pt/{slug}.md`
+- **Imagem de capa:** gerada com `generate_image` → salva em `public/images/posts/{slug}.png`
+- **cover_image no frontmatter:** `/images/posts/{slug}.png` (sempre `.png`, nunca `.svg`)
