@@ -181,7 +181,7 @@ async function deploy() {
 
   // 2. Compilação do Projeto (Build Estático)
   console.log("\n📦 2. Compilando o blog com Bun (`bun run build`)...");
-  runCmd("/rogerio/core/coreautocrm-blog/core/bun run build");
+  runCmd("bun run build");
 
   const distDir = path.resolve(process.cwd(), "dist");
   if (!fs.existsSync(distDir)) {
