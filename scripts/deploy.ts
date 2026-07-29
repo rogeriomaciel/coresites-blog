@@ -211,8 +211,8 @@ async function deploy() {
     process.exit(1);
   }
 
-  // 5. Publicação Automática Multi-Canal (Instagram + Facebook + LinkedIn) - DESATIVADO
-  // await publishSocialMediaForPosts();
+  // 5. Publicação Automática Multi-Canal (Instagram Carrossel + Facebook + LinkedIn)
+  await publishSocialMediaForPosts();
 
   console.log("\n==================================================================");
   console.log(" 🎉 DEPLOY DO BLOG E PUBLICAÇÃO NAS REDES SOCIAIS FINALIZADOS!");

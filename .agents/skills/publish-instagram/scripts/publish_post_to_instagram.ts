@@ -40,9 +40,9 @@ async function main() {
   console.log("👉 ETAPA 2/4: Renderizando Slides do Carrossel (4:5)...");
   const carouselFiles = await generateCarouselImagesForSlug(slug);
 
-  // Step 3: Render Reels Video MP4 (Google Veo 2.0 + ElevenLabs + Spoken Subtitles 72pt + Outro Signature)
-  console.log("👉 ETAPA 3/4: Renderizando Vídeo Reels 9:16 (Google Veo 2.0 + ElevenLabs + Legendas + Outro)...");
-  await runVeoReelsPipeline({ markdownPath: target });
+  // Step 3: Render Reels Video MP4 (Desativado)
+  // console.log("👉 ETAPA 3/4: Renderizando Vídeo Reels 9:16 (Desativado)...");
+  // await runVeoReelsPipeline({ markdownPath: target });
 
   // Step 4: Synchronize assets to public web directory
   const publicOutDir = path.resolve(process.cwd(), "public", "instagram_posts", slug);
@@ -52,13 +52,13 @@ async function main() {
 
   // Step 5: Publish if --publish flag is present
   if (publishFlag) {
-    console.log("👉 ETAPA 4/4: Disparando Publicação Real na Meta Graph API (1 Carrossel + 1 Reels)...");
+    console.log("👉 ETAPA 4/4: Disparando Publicação Real na Meta Graph API (Carrossel)...");
     
-    console.log("\n🎠 1/2: Publicando Carrossel de Slides (4:5)...");
+    console.log("\n🎠 Publicando Carrossel de Slides (4:5)...");
     await publishFormatToInstagram(slug, "carousel", true);
 
-    console.log("\n🎥 2/2: Publicando Vídeo de Reels (9:16 com Veo 2.0 + ElevenLabs)...");
-    await publishFormatToInstagram(slug, "reels", true);
+    // console.log("\n🎥 Publicando Vídeo de Reels (9:16 - Desativado)...");
+    // await publishFormatToInstagram(slug, "reels", true);
   } else {
     console.log("ℹ️ Modo apenas geração local concluído (passe '--publish' para disparar na Meta Graph API).");
   }
