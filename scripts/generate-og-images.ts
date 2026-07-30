@@ -135,13 +135,23 @@ async function generatePngFromSvg() {
         const pngWidePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '.png'))
         const pngSquarePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '-sq.png'))
 
+        const srcStat = fs.statSync(svgPath)
+        const needsWide = !fs.existsSync(pngWidePath) || fs.statSync(pngWidePath).mtimeMs < srcStat.mtimeMs
+        const needsSquare = !fs.existsSync(pngSquarePath) || fs.statSync(pngSquarePath).mtimeMs < srcStat.mtimeMs
+
+        if (!needsWide && !needsSquare) {
+          continue
+        }
+
         const frontmatter = findPostFrontmatter(file)
         
-        // Renderiza formato OG Wide (1200x630)
-        await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
+        if (needsWide) {
+          await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
+        }
         
-        // Renderiza formato IG Square (1080x1080)
-        await renderImage(svgPath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
+        if (needsSquare) {
+          await renderImage(svgPath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
+        }
 
         console.log(`✅ Dupla versão gerada para: ${file}`)
       }

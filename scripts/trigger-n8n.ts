@@ -45,7 +45,7 @@ async function processPost(slug: string, postPath: string) {
     : []
 
   if (publishedNetworks.includes(network)) {
-    if (isBatch || slugOrAll === 'all') {
+    if (isBatch || slugOrAll === 'all' || !process.stdin.isTTY) {
       console.log(`⏩ Ignorando '${slug}' (já publicado em ${network}).`)
       return
     } else {
@@ -78,7 +78,7 @@ async function processPost(slug: string, postPath: string) {
   console.log(`🚀 Enviando post "${payload.title}" para o Webhook do n8n (Rede: ${network})...`)
 
   try {
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(WEBHOOK_URL!, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,31 +110,37 @@ async function run() {
   const rootDir = path.join(process.cwd(), '..', 'content', 'posts')
   const coreDir = path.join(process.cwd(), 'content', 'posts')
   
-  const postsDir = fs.existsSync(rootDir) ? rootDir : (fs.existsSync(coreDir) ? coreDir : '')
+  const possibleDirs = [rootDir, coreDir].filter(d => fs.existsSync(d))
   
-  if (!postsDir) {
+  if (possibleDirs.length === 0) {
     console.error(`❌ Erro: Diretório de posts não encontrado.`)
     process.exit(1)
   }
 
   if (slugOrAll === 'all') {
-    const ptDir = path.join(postsDir, 'pt')
-    if (!fs.existsSync(ptDir)) {
-      console.log('Pasta pt/ não encontrada, nada a publicar.')
-      return
-    }
-    const files = fs.readdirSync(ptDir).filter(f => f.endsWith('.md'))
-    console.log(`🔍 Iniciando varredura em ${files.length} posts na pasta 'pt' para a rede: ${network}...`)
-    
-    for (const file of files) {
-      const slug = path.join('pt', file.replace(/\.md$/, ''))
-      const postPath = path.join(ptDir, file)
-      await processPost(slug, postPath)
+    for (const dir of possibleDirs) {
+      const ptDir = path.join(dir, 'pt')
+      if (!fs.existsSync(ptDir)) continue
+      const files = fs.readdirSync(ptDir).filter(f => f.endsWith('.md'))
+      console.log(`🔍 Iniciando varredura em ${files.length} posts em ${ptDir} para a rede: ${network}...`)
+      for (const file of files) {
+        const slug = path.join('pt', file.replace(/\.md$/, ''))
+        const postPath = path.join(ptDir, file)
+        await processPost(slug, postPath)
+      }
     }
     console.log(`\n🎉 Varredura de publicação finalizada!`)
   } else {
-    const postPath = path.join(postsDir, `${slugOrAll}.md`)
-    if (!fs.existsSync(postPath)) {
+    let postPath = ''
+    for (const dir of possibleDirs) {
+      const candidate = path.join(dir, `${slugOrAll}.md`)
+      if (fs.existsSync(candidate)) {
+        postPath = candidate
+        break
+      }
+    }
+
+    if (!postPath) {
       console.error(`❌ Erro: Post não encontrado para o slug "${slugOrAll}"`)
       process.exit(1)
     }

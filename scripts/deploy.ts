@@ -100,7 +100,7 @@ async function publishSocialMediaForPosts() {
       if (needsFacebook) {
         console.log(`\n📘 [FACEBOOK] Disparando Webhook do n8n...`);
         try {
-          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network facebook`);
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network facebook --batch`);
         } catch (fbErr) {
           console.error("❌ Erro na publicação do Facebook:", fbErr instanceof Error ? fbErr.message : fbErr);
         }
@@ -110,7 +110,7 @@ async function publishSocialMediaForPosts() {
       if (needsLinkedin) {
         console.log(`\n💼 [LINKEDIN] Disparando Webhook do n8n...`);
         try {
-          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network linkedin`);
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network linkedin --batch`);
         } catch (liErr) {
           console.error("❌ Erro na publicação do LinkedIn:", liErr instanceof Error ? liErr.message : liErr);
         }
