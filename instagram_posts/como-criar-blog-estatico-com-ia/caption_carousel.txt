@@ -2,15 +2,11 @@
 
 Descubra como construir um blog ultra-rápido sem WordPress usando React, Vite e inteligência artificial. Um guia completo sobre a arquitetura GitOps de conteúdo.
 
-No carrossel acima te mostramos como dominar essa estratégia na sua oficina mecânica com eficiência e automação.
+📌 Tópicos principais abordados neste carrossel:
+• Por que abandonar o WordPress?
+• A Arquitetura GitOps de Conteúdo
+• Vantagens Técnicas
 
-📌 Resumo do Carrossel:
-Slide 1: Capa
-Slide 2: Por que abandonar o WordPress?
-Slide 3: A Arquitetura GitOps de Conteúdo
-Slide 4: Vantagens Técnicas
-Slide 5: Como aplicar hoje mesmo!
+💬 Quer ler o artigo completo? Acesse o link na bio do nosso perfil ou acesse blog.coreautocrm.com.br!
 
-💬 Comente "OFICINA" ou acesse o link na bio para ler o artigo completo no blog!
-
-#carrosselinstagram #oficinamecanica #gestaoautomotiva #coreautocrm #automacao #iaautomoção
+#oficinamecanica #gestaoautomotiva #coreautocrm #desenvolvimento #donoDeOficina
