@@ -463,6 +463,28 @@ public/images/posts/{slug}.png
 
 ---
 
+## 🖼️ Regra #11 — Separação Estrita de Imagens: Blog (Limpa) vs Redes Sociais (Com Overlay)
+
+> ⚠️ **REGRA OBRIGATÓRIA DE COMPOSIÇÃO DE IMAGENS.**
+> Existe uma divisão estrita entre a foto exibida na página do blog e as imagens enviadas para as redes sociais:
+>
+> 1. **Página do Artigo no Blog (`public/images/posts/{slug}.png`):**
+>    - DEVE SER SEMPRE A FOTO LIMPA foto-realística.
+>    - NÃO DEVE TER NENHUM TEXTO SOBREPOSTO, GRADIENTE ESCURO OU OVERLAY.
+>    - É a imagem apontada pelo `cover_image` no frontmatter.
+>
+> 2. **Redes Sociais (Facebook, LinkedIn, Open Graph) (`public/images/posts/{slug}-og.png`):**
+>    - Gerada AUTOMATICAMENTE pelo script `generate-og-images.ts`.
+>    - Possui o gradiente escuro na parte inferior + Título em destaque + Descrição do artigo em texto legível.
+>    - É a URL enviada para Facebook/LinkedIn/OG meta tags (`og:image`).
+>
+> 3. **Instagram (`public/images/posts/{slug}-sq.png`):**
+>    - Gerada AUTOMATICAMENTE pelo script `generate-og-images.ts` em formato quadrado 1080x1080 com overlay.
+>
+> **NUNCA sobrescreva `{slug}.png` com o overlay de texto. A foto do artigo no blog permanece 100% limpa.**
+
+---
+
 ## 🎯 Regra #6 — Tom e Voz
 
 O leitor é um **dono de oficina mecânica brasileiro**. Escreva diretamente para ele:

@@ -22,8 +22,8 @@ function wrapText(text: string, maxChars: number) {
   return lines
 }
 
-function findPostFrontmatter(svgFilename: string) {
-  const slug = svgFilename.replace(/(\.svg|-base\.png)$/, '')
+function findPostFrontmatter(filename: string) {
+  const slug = filename.replace(/(\.svg|-base\.png|-og\.png|-sq\.png|\.png)$/, '')
   const searchPaths = [
     path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`),
     path.join(process.cwd(), 'content', 'posts', `${slug}.md`),
@@ -55,9 +55,9 @@ function findPostFrontmatter(svgFilename: string) {
   }
 }
 
-async function renderImage(svgPath: string, outPath: string, width: number, height: number, frontmatter: any, maxCharsTitle: number, maxCharsExcerpt: number) {
+async function renderImageWithOverlay(basePath: string, outPath: string, width: number, height: number, frontmatter: any, maxCharsTitle: number, maxCharsExcerpt: number) {
   try {
-    const baseImage = await sharp(svgPath, { density: 300 })
+    const baseImage = await sharp(basePath, { density: 300 })
       .resize(width, height, { 
         fit: 'cover',
         background: { r: 0, g: 0, b: 0, alpha: 1 } 
@@ -124,51 +124,60 @@ async function generatePngFromSvg() {
 
     const allFiles = fs.readdirSync(dir)
 
-    // Auto-normalize any standalone slug.png into slug-base.png so it gets processed
+    // 1. Identificar fotos base (limpas, sem overlay)
     for (const f of allFiles) {
-      if (f.endsWith('.png') && !f.endsWith('-base.png') && !f.endsWith('-sq.png')) {
+      if (f.endsWith('.png') && !f.endsWith('-base.png') && !f.endsWith('-sq.png') && !f.endsWith('-og.png')) {
         const baseName = f.replace(/\.png$/, '-base.png')
         const basePath = path.join(dir, baseName)
         const currentPath = path.join(dir, f)
+
+        // Se a versão -base.png ainda não existir, preservamos a foto limpa em -base.png
         if (!fs.existsSync(basePath)) {
-          console.log(`[OG Images] Auto-criando imagem base original: ${baseName}`)
+          console.log(`[OG Images] Preservando foto limpa base: ${baseName}`)
           fs.copyFileSync(currentPath, basePath)
         }
       }
     }
 
     const files = fs.readdirSync(dir)
-    const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png')))
+    const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png') && !f.endsWith('-og.png')))
 
     if (baseFiles.length > 0) {
-      console.log(`[OG Images] Encontrados ${baseFiles.length} arquivos base em ${dir}. Iniciando conversão dupla (Wide e Square)...`)
+      console.log(`[OG Images] Encontrados ${baseFiles.length} arquivos base em ${dir}. Gerando versões com overlay para Redes Sociais (-og.png e -sq.png)...`)
 
       for (const file of baseFiles) {
-        const svgPath = path.join(dir, file)
-        
-        // Caminhos de saída
-        const pngWidePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '.png'))
-        const pngSquarePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '-sq.png'))
+        const baseImagePath = path.join(dir, file)
+        const slug = file.replace(/(\.svg|-base\.png)$/, '')
 
-        const srcStat = fs.statSync(svgPath)
-        const needsWide = !fs.existsSync(pngWidePath) || fs.statSync(pngWidePath).mtimeMs < srcStat.mtimeMs
+        // Garante que slug.png (foto limpa do post no blog) venha de slug-base.png
+        const cleanBlogPath = path.join(dir, `${slug}.png`)
+        if (fs.existsSync(baseImagePath) && file.endsWith('-base.png')) {
+          fs.copyFileSync(baseImagePath, cleanBlogPath)
+        }
+
+        // Caminhos de saída com overlay para redes sociais
+        const pngOgPath = path.join(dir, `${slug}-og.png`)
+        const pngSquarePath = path.join(dir, `${slug}-sq.png`)
+
+        const srcStat = fs.statSync(baseImagePath)
+        const needsOg = !fs.existsSync(pngOgPath) || fs.statSync(pngOgPath).mtimeMs < srcStat.mtimeMs
         const needsSquare = !fs.existsSync(pngSquarePath) || fs.statSync(pngSquarePath).mtimeMs < srcStat.mtimeMs
 
-        if (!needsWide && !needsSquare) {
+        if (!needsOg && !needsSquare) {
           continue
         }
 
         const frontmatter = findPostFrontmatter(file)
         
-        if (needsWide) {
-          await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
+        if (needsOg) {
+          await renderImageWithOverlay(baseImagePath, pngOgPath, 1200, 630, frontmatter, 32, 68)
         }
         
         if (needsSquare) {
-          await renderImage(svgPath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
+          await renderImageWithOverlay(baseImagePath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
         }
 
-        console.log(`✅ Dupla versão gerada para: ${file}`)
+        console.log(`✅ Geradas versões com overlay (-og.png e -sq.png) para: ${slug}`)
       }
     }
   }
