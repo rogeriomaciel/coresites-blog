@@ -48,7 +48,7 @@ function findPostFrontmatter(svgFilename: string) {
     const parsed = matter(raw)
     return {
       title: parsed.data.title || slug,
-      excerpt: parsed.data.excerpt || ''
+      excerpt: parsed.data.excerpt || parsed.data.meta_description || ''
     }
   } catch {
     return null
@@ -68,11 +68,11 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
       const titleLines = wrapText(frontmatter.title, maxCharsTitle)
       const excerptLines = wrapText(frontmatter.excerpt, maxCharsExcerpt).slice(0, 3)
 
-      const titleLineHeight = width === 1080 ? 64 : 64
-      const excerptLineHeight = width === 1080 ? 40 : 40
+      const titleLineHeight = 64
+      const excerptLineHeight = 40
       
       const totalExcerptHeight = excerptLines.length * excerptLineHeight
-      const excerptStartY = height - (width === 1080 ? 50 : 30) - totalExcerptHeight
+      const excerptStartY = height - (width === 1080 ? 50 : 40) - totalExcerptHeight
 
       const totalTitleHeight = titleLines.length * titleLineHeight
       const titleStartY = excerptStartY - totalTitleHeight - 30
@@ -82,9 +82,9 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="black" stop-opacity="0.0"/>
-            <stop offset="${width === 1080 ? '50%' : '25%'}" stop-color="black" stop-opacity="${width === 1080 ? '0.1' : '0.2'}"/>
-            <stop offset="${width === 1080 ? '75%' : '60%'}" stop-color="black" stop-opacity="0.75"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0.95"/>
+            <stop offset="${width === 1080 ? '40%' : '20%'}" stop-color="black" stop-opacity="0.3"/>
+            <stop offset="${width === 1080 ? '70%' : '55%'}" stop-color="black" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0.98"/>
           </linearGradient>
         </defs>
         <rect x="0" y="0" width="${width}" height="${height}" fill="url(#grad)" />
@@ -92,13 +92,13 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
       
       let currY = titleStartY
       for (const line of titleLines) {
-        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-weight="bold" font-size="52" fill="#ffffff">${line}</text>`
+        textSvg += `\n<text x="60" y="${currY}" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="52" fill="#ffffff">${line}</text>`
         currY += titleLineHeight
       }
 
       currY = excerptStartY
       for (const line of excerptLines) {
-        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-size="28" fill="#e0e0e0">${line}</text>`
+        textSvg += `\n<text x="60" y="${currY}" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="28" fill="#e2e8f0">${line}</text>`
         currY += excerptLineHeight
       }
 
@@ -121,6 +121,21 @@ async function generatePngFromSvg() {
 
   for (const dir of dirs) {
     if (!fs.existsSync(dir)) continue
+
+    const allFiles = fs.readdirSync(dir)
+
+    // Auto-normalize any standalone slug.png into slug-base.png so it gets processed
+    for (const f of allFiles) {
+      if (f.endsWith('.png') && !f.endsWith('-base.png') && !f.endsWith('-sq.png')) {
+        const baseName = f.replace(/\.png$/, '-base.png')
+        const basePath = path.join(dir, baseName)
+        const currentPath = path.join(dir, f)
+        if (!fs.existsSync(basePath)) {
+          console.log(`[OG Images] Auto-criando imagem base original: ${baseName}`)
+          fs.copyFileSync(currentPath, basePath)
+        }
+      }
+    }
 
     const files = fs.readdirSync(dir)
     const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png')))
