@@ -9,7 +9,7 @@
     "generate-sitemap": "bun run scripts/generate-sitemap.ts",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "./deploy-local.sh",
+    "deploy": "bun run scripts/deploy.ts",
     "n8n:push": "bun run scripts/sync-n8n.ts push",
     "n8n:pull": "bun run scripts/sync-n8n.ts pull",
     "publish:social": "bun run scripts/trigger-n8n.ts",
