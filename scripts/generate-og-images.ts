@@ -22,8 +22,8 @@ function wrapText(text: string, maxChars: number) {
   return lines
 }
 
-function findPostFrontmatter(svgFilename: string) {
-  const slug = svgFilename.replace(/(\.svg|-base\.png)$/, '')
+function findPostFrontmatter(filename: string) {
+  const slug = filename.replace(/(\.svg|-base\.png|-og\.png|-sq\.png|\.png)$/, '')
   const searchPaths = [
     path.join(process.cwd(), '..', 'content', 'posts', `${slug}.md`),
     path.join(process.cwd(), 'content', 'posts', `${slug}.md`),
@@ -48,16 +48,16 @@ function findPostFrontmatter(svgFilename: string) {
     const parsed = matter(raw)
     return {
       title: parsed.data.title || slug,
-      excerpt: parsed.data.excerpt || ''
+      excerpt: parsed.data.excerpt || parsed.data.meta_description || ''
     }
   } catch {
     return null
   }
 }
 
-async function renderImage(svgPath: string, outPath: string, width: number, height: number, frontmatter: any, maxCharsTitle: number, maxCharsExcerpt: number) {
+async function renderImageWithOverlay(basePath: string, outPath: string, width: number, height: number, frontmatter: any, maxCharsTitle: number, maxCharsExcerpt: number) {
   try {
-    const baseImage = await sharp(svgPath, { density: 300 })
+    const baseImage = await sharp(basePath, { density: 300 })
       .resize(width, height, { 
         fit: 'cover',
         background: { r: 0, g: 0, b: 0, alpha: 1 } 
@@ -68,11 +68,11 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
       const titleLines = wrapText(frontmatter.title, maxCharsTitle)
       const excerptLines = wrapText(frontmatter.excerpt, maxCharsExcerpt).slice(0, 3)
 
-      const titleLineHeight = width === 1080 ? 64 : 64
-      const excerptLineHeight = width === 1080 ? 40 : 40
+      const titleLineHeight = 64
+      const excerptLineHeight = 40
       
       const totalExcerptHeight = excerptLines.length * excerptLineHeight
-      const excerptStartY = height - (width === 1080 ? 50 : 30) - totalExcerptHeight
+      const excerptStartY = height - (width === 1080 ? 50 : 40) - totalExcerptHeight
 
       const totalTitleHeight = titleLines.length * titleLineHeight
       const titleStartY = excerptStartY - totalTitleHeight - 30
@@ -82,9 +82,9 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="black" stop-opacity="0.0"/>
-            <stop offset="${width === 1080 ? '50%' : '25%'}" stop-color="black" stop-opacity="${width === 1080 ? '0.1' : '0.2'}"/>
-            <stop offset="${width === 1080 ? '75%' : '60%'}" stop-color="black" stop-opacity="0.75"/>
-            <stop offset="100%" stop-color="black" stop-opacity="0.95"/>
+            <stop offset="${width === 1080 ? '40%' : '20%'}" stop-color="black" stop-opacity="0.3"/>
+            <stop offset="${width === 1080 ? '70%' : '55%'}" stop-color="black" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="black" stop-opacity="0.98"/>
           </linearGradient>
         </defs>
         <rect x="0" y="0" width="${width}" height="${height}" fill="url(#grad)" />
@@ -92,13 +92,13 @@ async function renderImage(svgPath: string, outPath: string, width: number, heig
       
       let currY = titleStartY
       for (const line of titleLines) {
-        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-weight="bold" font-size="52" fill="#ffffff">${line}</text>`
+        textSvg += `\n<text x="60" y="${currY}" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="52" fill="#ffffff">${line}</text>`
         currY += titleLineHeight
       }
 
       currY = excerptStartY
       for (const line of excerptLines) {
-        textSvg += `\n<text x="60" y="${currY}" font-family="sans-serif" font-size="28" fill="#e0e0e0">${line}</text>`
+        textSvg += `\n<text x="60" y="${currY}" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="28" fill="#e2e8f0">${line}</text>`
         currY += excerptLineHeight
       }
 
@@ -122,28 +122,62 @@ async function generatePngFromSvg() {
   for (const dir of dirs) {
     if (!fs.existsSync(dir)) continue
 
+    const allFiles = fs.readdirSync(dir)
+
+    // 1. Identificar fotos base (limpas, sem overlay)
+    for (const f of allFiles) {
+      if (f.endsWith('.png') && !f.endsWith('-base.png') && !f.endsWith('-sq.png') && !f.endsWith('-og.png')) {
+        const baseName = f.replace(/\.png$/, '-base.png')
+        const basePath = path.join(dir, baseName)
+        const currentPath = path.join(dir, f)
+
+        // Se a versão -base.png ainda não existir, preservamos a foto limpa em -base.png
+        if (!fs.existsSync(basePath)) {
+          console.log(`[OG Images] Preservando foto limpa base: ${baseName}`)
+          fs.copyFileSync(currentPath, basePath)
+        }
+      }
+    }
+
     const files = fs.readdirSync(dir)
-    const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png')))
+    const baseFiles = files.filter(f => f.endsWith('.svg') || (f.endsWith('-base.png') && !f.endsWith('-sq.png') && !f.endsWith('-og.png')))
 
     if (baseFiles.length > 0) {
-      console.log(`[OG Images] Encontrados ${baseFiles.length} arquivos base em ${dir}. Iniciando conversão dupla (Wide e Square)...`)
+      console.log(`[OG Images] Encontrados ${baseFiles.length} arquivos base em ${dir}. Gerando versões com overlay para Redes Sociais (-og.png e -sq.png)...`)
 
       for (const file of baseFiles) {
-        const svgPath = path.join(dir, file)
-        
-        // Caminhos de saída
-        const pngWidePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '.png'))
-        const pngSquarePath = path.join(dir, file.replace(/(\.svg|-base\.png)$/, '-sq.png'))
+        const baseImagePath = path.join(dir, file)
+        const slug = file.replace(/(\.svg|-base\.png)$/, '')
+
+        // Garante que slug.png (foto limpa do post no blog) venha de slug-base.png
+        const cleanBlogPath = path.join(dir, `${slug}.png`)
+        if (fs.existsSync(baseImagePath) && file.endsWith('-base.png')) {
+          fs.copyFileSync(baseImagePath, cleanBlogPath)
+        }
+
+        // Caminhos de saída com overlay para redes sociais
+        const pngOgPath = path.join(dir, `${slug}-og.png`)
+        const pngSquarePath = path.join(dir, `${slug}-sq.png`)
+
+        const srcStat = fs.statSync(baseImagePath)
+        const needsOg = !fs.existsSync(pngOgPath) || fs.statSync(pngOgPath).mtimeMs < srcStat.mtimeMs
+        const needsSquare = !fs.existsSync(pngSquarePath) || fs.statSync(pngSquarePath).mtimeMs < srcStat.mtimeMs
+
+        if (!needsOg && !needsSquare) {
+          continue
+        }
 
         const frontmatter = findPostFrontmatter(file)
         
-        // Renderiza formato OG Wide (1200x630)
-        await renderImage(svgPath, pngWidePath, 1200, 630, frontmatter, 32, 68)
+        if (needsOg) {
+          await renderImageWithOverlay(baseImagePath, pngOgPath, 1200, 630, frontmatter, 32, 68)
+        }
         
-        // Renderiza formato IG Square (1080x1080)
-        await renderImage(svgPath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
+        if (needsSquare) {
+          await renderImageWithOverlay(baseImagePath, pngSquarePath, 1080, 1080, frontmatter, 28, 60)
+        }
 
-        console.log(`✅ Dupla versão gerada para: ${file}`)
+        console.log(`✅ Geradas versões com overlay (-og.png e -sq.png) para: ${slug}`)
       }
     }
   }

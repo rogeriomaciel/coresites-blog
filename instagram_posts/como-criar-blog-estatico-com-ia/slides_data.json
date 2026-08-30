@@ -2,52 +2,51 @@
   {
     "slideNumber": 1,
     "totalSlides": 5,
-    "tag": "GUIA PRÁTICO • COREAUTO CRM",
+    "tag": "DESENVOLVIMENTO • COREAUTO CRM",
     "title": "Como Criar um Blog Estático com IA que Supera o WordPress",
     "subtitle": "Descubra como construir um blog ultra-rápido sem WordPress usando React, Vite e inteligência artificial. Um guia completo sobre a arquitetura GitOps de conteúdo.",
-    "ctaText": "Deslize para ver a estratégia ➡️"
+    "ctaText": "Deslize para ver os detalhes ➡️"
   },
   {
     "slideNumber": 2,
     "totalSlides": 5,
-    "tag": "1. O DESAFIO NA OFICINA",
+    "tag": "1. O DIAGNÓSTICO",
     "title": "Por que abandonar o WordPress?",
-    "subtitle": "A resposta é direta: performance, segurança e controle total. Um blog estático servido via Nginx carrega instantaneament...",
+    "subtitle": "A resposta é direta: performance, segurança e controle total. Um blog estático servido via Nginx carrega insta...",
+    "bullets": [
+      "A resposta é direta: performance, segurança e controle total. Um blog ...",
+      "Enquanto o WordPress exige PHP, MySQL, cache pesado e atualizações con..."
+    ]
+  },
+  {
+    "slideNumber": 3,
+    "totalSlides": 5,
+    "tag": "2. A SOLUÇÃO PRÁTICA",
+    "title": "A Arquitetura GitOps de Conteúdo",
+    "subtitle": "O conceito é simples e elegante:...",
     "bullets": [
       "1. Você escreve o artigo (ou pede para a IA escrever)",
       "2. O artigo vira um arquivo Markdown no repositório Git"
     ]
   },
   {
-    "slideNumber": 3,
-    "totalSlides": 5,
-    "tag": "2. A SOLUÇÃO INTELIGENTE",
-    "title": "A Arquitetura GitOps de Conteúdo",
-    "subtitle": "Enquanto o WordPress exige PHP, MySQL, cache pesado e atualizações constantes de plugins, um site estático é simplesment...",
-    "bullets": [
-      "3. O build gera HTML estático com todo o SEO embutido",
-      "- Meta tags (title, description, keywords)"
-    ]
-  },
-  {
     "slideNumber": 4,
     "totalSlides": 5,
-    "tag": "3. O IMPACTO NO NEGÓCIO",
+    "tag": "3. O RESULTADO NA PRÁTICA",
     "title": "Vantagens Técnicas",
-    "subtitle": "O que muda na rotina da sua oficina mecânica:",
+    "subtitle": "| Aspecto | WordPress | Blog Estático |...",
     "bullets": [
-      "Economia imediata de tempo do dono e da recepção",
-      "Atendimento personalizado via WhatsApp",
-      "Aumento da taxa de fechamento de serviços"
+      "| Aspecto | WordPress | Blog Estático |...",
+      "|---------|-----------|---------------|..."
     ],
-    "highlightText": "🚀 Mais faturamento sem precisar contratar mais funcionários!"
+    "highlightText": "💡 |---------|-----------|---------------|..."
   },
   {
     "slideNumber": 5,
     "totalSlides": 5,
-    "tag": "PRÓXIMO PASSO",
-    "title": "Quer aplicar isso na sua oficina?",
+    "tag": "ARTIGO COMPLETO",
+    "title": "Quer dominar essa estratégia?",
     "subtitle": "Leia o artigo completo \"Como Criar um Blog Estático com IA que Supera o WordPress\" no nosso blog!",
-    "ctaText": "📌 Salve este post\n🚀 Compartilhe com um amigo dono de oficina\n🔗 Link no perfil do Instagram"
+    "ctaText": "📌 Salve este post\n🚀 Compartilhe com um colega de oficina\n🔗 Link no perfil do Instagram"
   }
 ]

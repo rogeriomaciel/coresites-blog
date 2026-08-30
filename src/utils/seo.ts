@@ -17,7 +17,7 @@ export function generateArticleJsonLd(
     headline: post.title,
     description: post.meta_description || post.excerpt,
     image: post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png|-og\.png|-sq\.png|\.png)$/, '-og.png')}`
       : undefined,
     datePublished: new Date(post.date).toISOString(),
     dateModified: new Date(post.date).toISOString(),
@@ -82,6 +82,7 @@ export function generateWebSiteJsonLd(): string {
 
 /**
  * Build Open Graph meta tags object.
+ * Forces social media tags to use -og.png (with text overlay)
  */
 export function buildOgTags(post: PostFrontmatter) {
   return {
@@ -90,7 +91,7 @@ export function buildOgTags(post: PostFrontmatter) {
     'og:type': 'article',
     'og:url': `${SITE_URL}/post/${post.slug}`,
     'og:image': post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png|-og\.png|-sq\.png|\.png)$/, '-og.png')}`
       : undefined,
     'og:site_name': SITE_NAME,
     'og:locale': 'pt_BR',
@@ -110,18 +111,15 @@ export function buildTwitterTags(post: PostFrontmatter) {
     'twitter:title': post.meta_title || post.title,
     'twitter:description': post.meta_description || post.excerpt,
     'twitter:image': post.cover_image
-      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png)$/, '.png')}`
+      ? `${SITE_URL}${post.cover_image.replace(/(\.svg|-base\.png|-og\.png|-sq\.png|\.png)$/, '-og.png')}`
       : undefined,
   }
 }
 
 /**
  * Generate JSON-LD FAQPage structured data from markdown content.
- * Extracts headers ending with '?' and the subsequent paragraph.
  */
 export function generateFAQJsonLd(content: string): string | null {
-  // Regex matches '## ' or '### ' followed by text ending with '?'
-  // Then captures the paragraph(s) until the next header or EOF
   const faqRegex = /^#{2,3}\s+(.+?\?)\s*\n+([^#]+)/gm
   const faqs: { question: string; answer: string }[] = []
   

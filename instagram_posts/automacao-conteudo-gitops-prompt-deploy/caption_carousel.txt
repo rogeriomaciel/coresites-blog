@@ -2,15 +2,11 @@
 
 Como construir uma esteira automatizada que transforma um prompt em artigo publicado, usando Git, CI/CD e IA.
 
-No carrossel acima te mostramos como dominar essa estratégia na sua oficina mecânica com eficiência e automação.
+📌 Tópicos principais abordados neste carrossel:
+• O Conceito de GitOps para Conteúdo
+• O Fluxo Completo
+• Por que isso é melhor que um CMS?
 
-📌 Resumo do Carrossel:
-Slide 1: Capa
-Slide 2: O Conceito de GitOps para Conteúdo
-Slide 3: O Fluxo Completo
-Slide 4: Por que isso é melhor que um CMS?
-Slide 5: Como aplicar hoje mesmo!
+💬 Quer ler o artigo completo? Acesse o link na bio do nosso perfil ou acesse blog.coreautocrm.com.br!
 
-💬 Comente "OFICINA" ou acesse o link na bio para ler o artigo completo no blog!
-
-#carrosselinstagram #oficinamecanica #gestaoautomotiva #coreautocrm #automacao #iaautomoção
+#oficinamecanica #gestaoautomotiva #coreautocrm #automação #donoDeOficina

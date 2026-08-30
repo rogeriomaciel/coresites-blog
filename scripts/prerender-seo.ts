@@ -213,10 +213,9 @@ async function prerenderSEO() {
       })
     }
 
-    // Tratando a extensão da imagem de capa (se for svg, o OG image vai usar png)
     let imageUrl = ''
     if (data.cover_image) {
-      imageUrl = `${SITE_URL}${data.cover_image.replace(/\.svg$/, '.png')}`
+      imageUrl = `${SITE_URL}${data.cover_image.replace(/(\.svg|-base\.png|-sq\.png|-og\.png|\.png)$/, '-og.png')}`
     }
 
     // Gerar o HTML do corpo do post de maneira estática

@@ -49,8 +49,15 @@ function runCmd(cmd: string, cwd = process.cwd()): string {
 async function publishSocialMediaForPosts() {
   console.log("\n📱 5. Verificando artigos para publicação nas Redes Sociais (Instagram, Facebook e LinkedIn)...");
 
-  const postsDir = path.resolve(process.cwd(), "content", "posts", "pt");
-  if (!fs.existsSync(postsDir)) {
+  const rootPostsDir = path.resolve(process.cwd(), "..", "content", "posts", "pt");
+  const corePostsDir = path.resolve(process.cwd(), "content", "posts", "pt");
+  const postsDir = fs.existsSync(rootPostsDir)
+    ? rootPostsDir
+    : fs.existsSync(corePostsDir)
+      ? corePostsDir
+      : null;
+
+  if (!postsDir || !fs.existsSync(postsDir)) {
     console.log("ℹ️ Pasta de posts pt/ não encontrada. Pulando redes sociais.");
     return;
   }
@@ -90,7 +97,7 @@ async function publishSocialMediaForPosts() {
             "scripts",
             "publish_post_to_instagram.ts"
           );
-          runCmd(`bun run "${igScript}" "content/posts/pt/${file}" --publish`);
+          runCmd(`bun run "${igScript}" "${path.relative(process.cwd(), filePath)}" --publish`);
         } catch (igErr) {
           console.error("❌ Erro na publicação do Instagram:", igErr instanceof Error ? igErr.message : igErr);
         }
@@ -100,7 +107,7 @@ async function publishSocialMediaForPosts() {
       if (needsFacebook) {
         console.log(`\n📘 [FACEBOOK] Disparando Webhook do n8n...`);
         try {
-          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network facebook`);
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network facebook --batch`);
         } catch (fbErr) {
           console.error("❌ Erro na publicação do Facebook:", fbErr instanceof Error ? fbErr.message : fbErr);
         }
@@ -110,7 +117,7 @@ async function publishSocialMediaForPosts() {
       if (needsLinkedin) {
         console.log(`\n💼 [LINKEDIN] Disparando Webhook do n8n...`);
         try {
-          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network linkedin`);
+          runCmd(`bun run scripts/trigger-n8n.ts "pt/${slug}" --network linkedin --batch`);
         } catch (liErr) {
           console.error("❌ Erro na publicação do LinkedIn:", liErr instanceof Error ? liErr.message : liErr);
         }

@@ -28,25 +28,66 @@ export interface ReelsData {
   sections: ReelsSection[];
 }
 
-function extractFrontmatter(content: string) {
-  const parsed = matter(content);
-  let title = parsed.data.title || "";
-  if (typeof title === "string") {
-    title = title.replace(/^>-|\s+/g, " ").trim();
-  }
-  const attributes: Record<string, any> = {
-    ...parsed.data,
-    title: title || parsed.data.title,
-  };
-  return { attributes, body: parsed.content };
-}
-
 function cleanText(text: string): string {
   return text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1") // Remove markdown links
-    .replace(/[*_#`~]/g, "") // Remove formatting
+    .replace(/[*_#`~>]/g, "") // Remove formatting
     .replace(/\s+/g, " ")
     .trim();
+}
+
+interface ParsedSection {
+  title: string;
+  paragraphs: string[];
+  bullets: string[];
+}
+
+function parseMarkdownSections(body: string): ParsedSection[] {
+  const lines = body.split("\n");
+  const sections: ParsedSection[] = [];
+  let currentSection: ParsedSection = { title: "", paragraphs: [], bullets: [] };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("## ") || trimmed.startsWith("### ")) {
+      const titleClean = cleanText(trimmed);
+      // Skip generic FAQ or recommendation sections
+      if (
+        titleClean.toLowerCase().includes("faq") ||
+        titleClean.toLowerCase().includes("perguntas frequentes") ||
+        titleClean.toLowerCase().includes("leituras recomendadas")
+      ) {
+        continue;
+      }
+      if (currentSection.title || currentSection.paragraphs.length > 0 || currentSection.bullets.length > 0) {
+        sections.push(currentSection);
+      }
+      currentSection = { title: titleClean, paragraphs: [], bullets: [] };
+    } else if (
+      trimmed.startsWith("- ") ||
+      trimmed.startsWith("* ") ||
+      /^\d+\.\s/.test(trimmed)
+    ) {
+      const bClean = cleanText(trimmed);
+      if (bClean.length > 10) {
+        currentSection.bullets.push(bClean);
+      }
+    } else if (
+      trimmed.length > 25 &&
+      !trimmed.startsWith("<") &&
+      !trimmed.startsWith("![") &&
+      !trimmed.startsWith("---")
+    ) {
+      currentSection.paragraphs.push(cleanText(trimmed));
+    }
+  }
+
+  if (currentSection.title || currentSection.paragraphs.length > 0 || currentSection.bullets.length > 0) {
+    sections.push(currentSection);
+  }
+
+  return sections;
 }
 
 export function repurposePostToInstagram(filePath: string) {
@@ -57,117 +98,99 @@ export function repurposePostToInstagram(filePath: string) {
   }
 
   const rawContent = fs.readFileSync(absolutePath, "utf-8");
-  const { attributes, body } = extractFrontmatter(rawContent);
+  const parsedMatter = matter(rawContent);
 
-  const title = attributes.title || "Como Escalar sua Oficina Mecânica com IA";
-  const excerpt =
-    attributes.excerpt ||
-    attributes.meta_description ||
-    "Descubra como aumentar o faturamento e recuperar tempo na sua oficina com automação conversacional.";
-  const slug = attributes.slug || path.basename(filePath, ".md");
-
-  // Extract headings and bullet points dynamically from post content
-  const lines = body.split("\n");
-  const headings: string[] = [];
-  const bulletPoints: string[] = [];
-  const paragraphs: string[] = [];
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith("## ") || trimmed.startsWith("### ")) {
-      const cleanH = cleanText(trimmed);
-      if (
-        cleanH.length > 5 &&
-        !cleanH.toLowerCase().includes("faq") &&
-        !cleanH.toLowerCase().includes("perguntas")
-      ) {
-        headings.push(cleanH);
-      }
-    } else if (
-      trimmed.startsWith("1. ") ||
-      trimmed.startsWith("2. ") ||
-      trimmed.startsWith("3. ") ||
-      trimmed.startsWith("- ") ||
-      trimmed.startsWith("* ")
-    ) {
-      const cleanB = cleanText(trimmed);
-      if (cleanB.length > 15) {
-        bulletPoints.push(cleanB);
-      }
-    } else if (trimmed.length > 40 && !trimmed.startsWith("<") && !trimmed.startsWith("![")) {
-      paragraphs.push(cleanText(trimmed));
-    }
+  let title = parsedMatter.data.title || "";
+  if (typeof title === "string") {
+    title = title.replace(/^>-|\s+/g, " ").trim();
   }
 
-  const mainHeading1 = headings[0] || "O Desafio da Gestão na Oficina";
-  const mainHeading2 = headings[1] || "A Transformação com Inteligência Artificial";
-  const mainHeading3 = headings[2] || "Resultados Práticos no Faturamento";
+  const excerpt =
+    parsedMatter.data.excerpt ||
+    parsedMatter.data.meta_description ||
+    "Confira os principais aprendizados deste artigo do blog CoreAutoCRM.";
+  const slug = parsedMatter.data.slug || path.basename(filePath, ".md");
+  const category = (parsedMatter.data.category || "GESTÃO DE OFICINA").toUpperCase();
 
-  const b1 = bulletPoints[0] || paragraphs[0] || "Processos manuais consomem tempo precioso da equipe";
-  const b2 = bulletPoints[1] || paragraphs[1] || "A IA automatiza tarefas repetitivas com precisão";
-  const b3 = bulletPoints[2] || paragraphs[2] || "Sua oficina atende com excelência 24h por dia no WhatsApp";
+  const sections = parseMarkdownSections(parsedMatter.content);
 
-  // --- FORMATO 1: LEGENDA POST SIMPLES (Single Image) ---
-  const captionSingle = `🔥 ${title.toUpperCase()}
+  // Build slides content strictly based on the actual post sections
+  const sec1 = sections[0] || {
+    title: "O Problema Principal",
+    paragraphs: [excerpt],
+    bullets: ["Falta de acompanhamento estruturado", "Perda de oportunidades diárias"],
+  };
 
-Dono de oficina mecânica: você quer elevar a gestão da sua loja para o próximo nível? 🛠️⚡
+  const sec2 = sections[1] || {
+    title: "Como Resolver",
+    paragraphs: [sections[0]?.paragraphs[1] || excerpt],
+    bullets: sections[0]?.bullets.slice(2, 4) || ["Mudança de processo no atendimento", "Padronização das etapas"],
+  };
 
-📌 DESTAQUES DESTE ARTIGO:
-👉 ${mainHeading1}
-👉 ${mainHeading2}
-👉 ${mainHeading3}
+  const sec3 = sections[2] || sections[sections.length - 1] || {
+    title: "Impacto e Resultado",
+    paragraphs: ["Aplicações práticas para sua oficina."],
+    bullets: ["Maior previsibilidade de receita", "Retenção de clientes"],
+  };
 
-💡 Quer ver a estratégia completa de como implementar isso na sua oficina?
-🔗 Acesse o artigo completo no blog do CoreAuto CRM (Link na Bio ou acesse coreautocrm.com.br)!
+  // Helper to extract clean bullet points for a slide
+  function getSlideBullets(sec: ParsedSection): string[] {
+    if (sec.bullets.length >= 2) {
+      return sec.bullets.slice(0, 2);
+    }
+    if (sec.bullets.length === 1) {
+      const extra = sec.paragraphs[1] || sec.paragraphs[0] || "";
+      return [sec.bullets[0], extra ? extra.substring(0, 70) + "..." : "Ação prática no pátio"];
+    }
+    const p0 = sec.paragraphs[0] || "";
+    const p1 = sec.paragraphs[1] || "";
+    return [
+      p0 ? p0.substring(0, 70) + "..." : "Acompanhamento detalhado",
+      p1 ? p1.substring(0, 70) + "..." : "Aplicação direta na rotina",
+    ];
+  }
 
-#oficinamecanica #gestaoautomotiva #coreautocrm #oficinaia #atendimentowhatsapp #mecanicaautomotiva`;
-
-  // --- FORMATO 2: ESTRUTURA E LEGENDA DO CARROSSEL (4:5) DEDICADA A ESTE POST ---
   const slidesData: SlideData[] = [
     {
       slideNumber: 1,
       totalSlides: 5,
-      tag: "GUIA PRÁTICO • COREAUTO CRM",
+      tag: `${category} • COREAUTO CRM`,
       title: title,
       subtitle: excerpt,
-      ctaText: "Deslize para ver a estratégia ➡️",
+      ctaText: "Deslize para ver os detalhes ➡️",
     },
     {
       slideNumber: 2,
       totalSlides: 5,
-      tag: "1. O DESAFIO NA OFICINA",
-      title: mainHeading1,
-      subtitle: paragraphs[0] ? paragraphs[0].substring(0, 120) + "..." : excerpt,
-      bullets: [b1, b2].slice(0, 2),
+      tag: "1. O DIAGNÓSTICO",
+      title: sec1.title || "O Diagnóstico Inicial",
+      subtitle: sec1.paragraphs[0] ? sec1.paragraphs[0].substring(0, 110) + "..." : excerpt,
+      bullets: getSlideBullets(sec1),
     },
     {
       slideNumber: 3,
       totalSlides: 5,
-      tag: "2. A SOLUÇÃO INTELIGENTE",
-      title: mainHeading2,
-      subtitle: paragraphs[1] ? paragraphs[1].substring(0, 120) + "..." : "Veja como aplicar na prática:",
-      bullets: [b3, bulletPoints[3] || "Atendimento rápido e padronizado"].slice(0, 2),
+      tag: "2. A SOLUÇÃO PRÁTICA",
+      title: sec2.title || "Passos para Solução",
+      subtitle: sec2.paragraphs[0] ? sec2.paragraphs[0].substring(0, 110) + "..." : "Veja o método de aplicação:",
+      bullets: getSlideBullets(sec2),
     },
     {
       slideNumber: 4,
       totalSlides: 5,
-      tag: "3. O IMPACTO NO NEGÓCIO",
-      title: mainHeading3,
-      subtitle: "O que muda na rotina da sua oficina mecânica:",
-      bullets: [
-        "Economia imediata de tempo do dono e da recepção",
-        "Atendimento personalizado via WhatsApp",
-        "Aumento da taxa de fechamento de serviços",
-      ],
-      highlightText: "🚀 Mais faturamento sem precisar contratar mais funcionários!",
+      tag: "3. O RESULTADO NA PRÁTICA",
+      title: sec3.title || "O Impacto no Caixa",
+      subtitle: sec3.paragraphs[0] ? sec3.paragraphs[0].substring(0, 110) + "..." : "Resultado garantido no pátio:",
+      bullets: getSlideBullets(sec3),
+      highlightText: sec3.paragraphs[1] ? `💡 ${sec3.paragraphs[1].substring(0, 80)}...` : undefined,
     },
     {
       slideNumber: 5,
       totalSlides: 5,
-      tag: "PRÓXIMO PASSO",
-      title: "Quer aplicar isso na sua oficina?",
+      tag: "ARTIGO COMPLETO",
+      title: "Quer dominar essa estratégia?",
       subtitle: `Leia o artigo completo "${title}" no nosso blog!`,
-      ctaText: "📌 Salve este post\n🚀 Compartilhe com um amigo dono de oficina\n🔗 Link no perfil do Instagram",
+      ctaText: "📌 Salve este post\n🚀 Compartilhe com um colega de oficina\n🔗 Link no perfil do Instagram",
     },
   ];
 
@@ -175,22 +198,22 @@ Dono de oficina mecânica: você quer elevar a gestão da sua loja para o próxi
 
 ${excerpt}
 
-No carrossel acima te mostramos como dominar essa estratégia na sua oficina mecânica com eficiência e automação.
+📌 Tópicos principais abordados neste carrossel:
+• ${sec1.title}
+• ${sec2.title}
+• ${sec3.title}
 
-📌 Resumo do Carrossel:
-Slide 1: Capa
-Slide 2: ${mainHeading1}
-Slide 3: ${mainHeading2}
-Slide 4: ${mainHeading3}
-Slide 5: Como aplicar hoje mesmo!
+💬 Quer ler o artigo completo? Acesse o link na bio do nosso perfil ou acesse blog.coreautocrm.com.br!
 
-💬 Comente "OFICINA" ou acesse o link na bio para ler o artigo completo no blog!
+#oficinamecanica #gestaoautomotiva #coreautocrm #${category.toLowerCase().replace(/\s+/g, "")} #donoDeOficina`;
 
-#carrosselinstagram #oficinamecanica #gestaoautomotiva #coreautocrm #automacao #iaautomoção`;
+  const captionSingle = `🔥 ${title.toUpperCase()}
 
-  // --- FORMATO 3: ROTEIRO E DADOS DO REELS PERSUASIVO DEDICADO A ESTE POST ESPECÍFICO (9:16) ---
-  const firstPara = paragraphs[0] || "Muitas oficinas perdem clientes e tempo por falta de processos automatizados no WhatsApp.";
-  const secondPara = paragraphs[1] || "A inteligência artificial do CoreAuto CRM resolve esse problema organizando o atendimento em tempo real.";
+${excerpt}
+
+💡 Acesse o artigo completo no blog do CoreAuto CRM (link na bio)!
+
+#oficinamecanica #gestaoautomotiva #coreautocrm`;
 
   const reelsData: ReelsData = {
     title: title,
@@ -200,29 +223,29 @@ Slide 5: Como aplicar hoje mesmo!
       {
         step: 1,
         title: "HOOK (0-5s)",
-        voiceover: `Dono de oficina mecânica, você já parou pra pensar sobre ${title.toLowerCase()}? Se liga nisso!`,
+        voiceover: `Dono de oficina mecânica, atenção: ${title.toLowerCase()}. Se liga nisso!`,
         onScreenText: `⚠️ ATENÇÃO DONO DE OFICINA!\n${title}`,
         durationSeconds: 5,
       },
       {
         step: 2,
         title: "DOR / PROBLEMA (5-12s)",
-        voiceover: cleanText(firstPara).substring(0, 180),
-        onScreenText: `❌ O PROBLEMA:\n${mainHeading1}`,
+        voiceover: (sec1.paragraphs[0] || excerpt).substring(0, 180),
+        onScreenText: `❌ O PROBLEMA:\n${sec1.title}`,
         durationSeconds: 7,
       },
       {
         step: 3,
         title: "SOLUÇÃO PERSUASIVA (12-20s)",
-        voiceover: cleanText(secondPara).substring(0, 180),
-        onScreenText: `🧠 A SOLUÇÃO COM IA:\n${mainHeading2}`,
+        voiceover: (sec2.paragraphs[0] || excerpt).substring(0, 180),
+        onScreenText: `🧠 A SOLUÇÃO:\n${sec2.title}`,
         durationSeconds: 8,
       },
       {
         step: 4,
         title: "CTA IMPERDÍVEL (20-28s)",
-        voiceover: `Quer ver como aplicar essa transformação na sua oficina hoje mesmo? Comente a palavra OFICINA aqui embaixo ou acesse o link na bio pra ler o artigo completo no blog do CoreAuto CRM!`,
-        onScreenText: `🚀 QUER APLICAR NA SUA OFICINA?\nComente "OFICINA" ou acesse a bio! 🔗`,
+        voiceover: `Acesse o link na bio para ler o artigo completo "${title}" no blog do CoreAuto CRM!`,
+        onScreenText: `🚀 LEIA O ARTIGO COMPLETO!\nAcesse o link na bio! 🔗`,
         durationSeconds: 8,
       },
     ],
@@ -232,13 +255,10 @@ Slide 5: Como aplicar hoje mesmo!
 
 ${excerpt}
 
-💡 No vídeo te explicamos exatamente como essa estratégia funciona na prática para oficinas mecânicas.
+👇 Acesse o link na bio para ler o artigo completo no blog!
 
-👇 Comente "OFICINA" ou clique no link na bio para ler o artigo completo no blog!
+#reelsinstagram #oficinamecanica #gestaoautomotiva #coreautocrm`;
 
-#reelsinstagram #oficinamecanica #gestaoautomotiva #coreautocrm #oficinaia #tecnologiaautomotiva`;
-
-  // Write generated output files
   const outDir = path.resolve(process.cwd(), "instagram_posts", slug);
   if (!fs.existsSync(outDir)) {
     fs.mkdirSync(outDir, { recursive: true });
@@ -255,8 +275,7 @@ ${excerpt}
   return { slug, outDir };
 }
 
-// CLI Direct Execution
 if (process.argv[1]?.includes("repurpose_blog_to_instagram")) {
-  const targetFile = process.argv[2] || "content/posts/pt/recuperar-orcamentos-parados-whatsapp-oficina.md";
+  const targetFile = process.argv[2] || "content/posts/pt/como-vender-mais-revisao-preventiva-oficina.md";
   repurposePostToInstagram(targetFile);
 }

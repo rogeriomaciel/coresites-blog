@@ -6,7 +6,7 @@
     {
       "step": 1,
       "title": "HOOK (0-5s)",
-      "voiceover": "Dono de oficina mecânica, você já parou pra pensar sobre como criar um blog estático com ia que supera o wordpress? Se liga nisso!",
+      "voiceover": "Dono de oficina mecânica, atenção: como criar um blog estático com ia que supera o wordpress. Se liga nisso!",
       "onScreenText": "⚠️ ATENÇÃO DONO DE OFICINA!\nComo Criar um Blog Estático com IA que Supera o WordPress",
       "durationSeconds": 5
     },
@@ -20,15 +20,15 @@
     {
       "step": 3,
       "title": "SOLUÇÃO PERSUASIVA (12-20s)",
-      "voiceover": "Enquanto o WordPress exige PHP, MySQL, cache pesado e atualizações constantes de plugins, um site estático é simplesmente HTML puro voando no servidor.",
-      "onScreenText": "🧠 A SOLUÇÃO COM IA:\nA Arquitetura GitOps de Conteúdo",
+      "voiceover": "O conceito é simples e elegante:",
+      "onScreenText": "🧠 A SOLUÇÃO:\nA Arquitetura GitOps de Conteúdo",
       "durationSeconds": 8
     },
     {
       "step": 4,
       "title": "CTA IMPERDÍVEL (20-28s)",
-      "voiceover": "Quer ver como aplicar essa transformação na sua oficina hoje mesmo? Comente a palavra OFICINA aqui embaixo ou acesse o link na bio pra ler o artigo completo no blog do CoreAuto CRM!",
-      "onScreenText": "🚀 QUER APLICAR NA SUA OFICINA?\nComente \"OFICINA\" ou acesse a bio! 🔗",
+      "voiceover": "Acesse o link na bio para ler o artigo completo \"Como Criar um Blog Estático com IA que Supera o WordPress\" no blog do CoreAuto CRM!",
+      "onScreenText": "🚀 LEIA O ARTIGO COMPLETO!\nAcesse o link na bio! 🔗",
       "durationSeconds": 8
     }
   ]

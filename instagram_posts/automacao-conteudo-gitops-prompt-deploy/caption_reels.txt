@@ -2,8 +2,6 @@
 
 Como construir uma esteira automatizada que transforma um prompt em artigo publicado, usando Git, CI/CD e IA.
 
-💡 No vídeo te explicamos exatamente como essa estratégia funciona na prática para oficinas mecânicas.
+👇 Acesse o link na bio para ler o artigo completo no blog!
 
-👇 Comente "OFICINA" ou clique no link na bio para ler o artigo completo no blog!
-
-#reelsinstagram #oficinamecanica #gestaoautomotiva #coreautocrm #oficinaia #tecnologiaautomotiva
+#reelsinstagram #oficinamecanica #gestaoautomotiva #coreautocrm
